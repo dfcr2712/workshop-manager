@@ -3,6 +3,7 @@ package com.dfcr.workshopmanager.controller;
 import com.dfcr.workshopmanager.service.CustomerService;
 import org.springframework.web.bind.annotation.*;
 import com.dfcr.workshopmanager.entity.Customer;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
@@ -24,6 +25,11 @@ public class CustomerController {
     @GetMapping
     public List<Customer> getAllCustomers(){
         return customerService.getAllCustomers();
+    }
+
+    @GetMapping("/{id}")
+    public Customer getCustomerById(@PathVariable Long id) {
+        return customerService.getCustomerById(id);
     }
 
 }
