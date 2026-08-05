@@ -4,6 +4,8 @@ import com.dfcr.workshopmanager.entity.Customer;
 import com.dfcr.workshopmanager.repository.CustomerRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class CustomerService {
 
@@ -17,5 +19,8 @@ public class CustomerService {
         return customerRepository.save(customer);
     }
 
+    public List<Customer> getAllCustomers(){
+        return customerRepository.findAll();
+    }
 
 }

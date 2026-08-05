@@ -1,8 +1,10 @@
 package com.dfcr.workshopmanager.controller;
 
 import com.dfcr.workshopmanager.service.CustomerService;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+import com.dfcr.workshopmanager.entity.Customer;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/customers")
@@ -13,4 +15,15 @@ public class CustomerController {
     public CustomerController(CustomerService customerService) {
         this.customerService = customerService;
     }
+
+    @PostMapping
+    public Customer createCustomer(@RequestBody Customer customer){
+        return customerService.saveCustomer(customer);
+    }
+
+    @GetMapping
+    public List<Customer> getAllCustomers(){
+        return customerService.getAllCustomers();
+    }
+
 }
