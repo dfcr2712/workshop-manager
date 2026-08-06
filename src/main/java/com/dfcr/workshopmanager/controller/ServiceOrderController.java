@@ -18,29 +18,28 @@ public class ServiceOrderController {
     }
 
     @PostMapping("/vehicle/{vehicleId}")
-    public ServiceOrder createServiceOrder(@PathVariable Long vehicleId, @RequestBody ServiceOrder serviceOrder){
+    public ServiceOrder createServiceOrder(@PathVariable Long vehicleId, @RequestBody ServiceOrder serviceOrder) {
         return serviceOrderService.createServiceOrder(serviceOrder, vehicleId);
     }
 
     @GetMapping
-    public List<ServiceOrder> getAllServiceOrders(){
+    public List<ServiceOrder> getAllServiceOrders() {
         return serviceOrderService.getAllServiceOrders();
     }
 
     @GetMapping("/{id}")
-    public ServiceOrder getServiceById(@PathVariable Long id){
+    public ServiceOrder getServiceById(@PathVariable Long id) {
         return serviceOrderService.getServiceOrderById(id);
     }
 
     @PutMapping("/{id}")
-    public ServiceOrder updateServiceOrder(@PathVariable Long id,
-                                           @RequestBody ServiceOrder updatedServiceOrder){
+    public ServiceOrder updateServiceOrder(@PathVariable Long id, @RequestBody ServiceOrder updatedServiceOrder) {
         return serviceOrderService.updateServiceOrder(id, updatedServiceOrder);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteServiceOrder(@PathVariable Long id){
+    public void deleteServiceOrder(@PathVariable Long id) {
         serviceOrderService.deleteServiceOrder(id);
     }
 }

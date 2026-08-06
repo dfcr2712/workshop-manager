@@ -26,6 +26,7 @@ public class Vehicle {
     @Column(nullable = false)
     private String model;
 
+    @Column(name = "manufacture_year")
     private int year;
 
     @Column(unique = true)

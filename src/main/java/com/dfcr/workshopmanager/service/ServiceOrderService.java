@@ -3,6 +3,7 @@ package com.dfcr.workshopmanager.service;
 import com.dfcr.workshopmanager.entity.ServiceOrder;
 import com.dfcr.workshopmanager.entity.Vehicle;
 import com.dfcr.workshopmanager.enums.ServiceOrderStatus;
+import com.dfcr.workshopmanager.exception.ServiceOrderClosedException;
 import com.dfcr.workshopmanager.exception.ServiceOrderNotFoundException;
 import com.dfcr.workshopmanager.repository.ServiceOrderRepository;
 import org.springframework.stereotype.Service;
@@ -22,7 +23,7 @@ public class ServiceOrderService {
         this.vehicleService = vehicleService;
     }
 
-    public ServiceOrder createServiceOrder(ServiceOrder serviceOrder, Long vehicleId){
+    public ServiceOrder createServiceOrder(ServiceOrder serviceOrder, Long vehicleId) {
 
         Vehicle vehicle = vehicleService.getVehicleById(vehicleId);
         serviceOrder.setVehicle(vehicle);
@@ -32,17 +33,21 @@ public class ServiceOrderService {
         return serviceOrderRepository.save(serviceOrder);
     }
 
-    public List<ServiceOrder> getAllServiceOrders(){
+    public List<ServiceOrder> getAllServiceOrders() {
         return serviceOrderRepository.findAll();
     }
 
-    public ServiceOrder getServiceOrderById(Long id){
+    public ServiceOrder getServiceOrderById(Long id) {
         return serviceOrderRepository.findById(id).orElseThrow(() -> new ServiceOrderNotFoundException(id));
     }
 
-    public ServiceOrder updateServiceOrder(Long id, ServiceOrder updatedServiceOrder){
+    public ServiceOrder updateServiceOrder(Long id, ServiceOrder updatedServiceOrder) {
         ServiceOrder existingServiceOrder = getServiceOrderById(id);
-        if(updatedServiceOrder.getStatus() == ServiceOrderStatus.COMPLETED){
+        if (existingServiceOrder.getStatus() == ServiceOrderStatus.COMPLETED || existingServiceOrder.getStatus() == ServiceOrderStatus.CANCELLED) {
+            throw new ServiceOrderClosedException(id);
+        }
+
+        if (updatedServiceOrder.getStatus() == ServiceOrderStatus.COMPLETED) {
             existingServiceOrder.setCompletedAt(LocalDateTime.now());
         }
 
@@ -51,7 +56,7 @@ public class ServiceOrderService {
         return serviceOrderRepository.save(existingServiceOrder);
     }
 
-    public void deleteServiceOrder(Long id){
+    public void deleteServiceOrder(Long id) {
         ServiceOrder serviceOrder = getServiceOrderById(id);
         serviceOrderRepository.delete(serviceOrder);
     }
