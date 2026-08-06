@@ -60,4 +60,9 @@ public class ServiceOrderService {
         ServiceOrder serviceOrder = getServiceOrderById(id);
         serviceOrderRepository.delete(serviceOrder);
     }
+
+    public List<ServiceOrder> getServiceOrdersByVehicleId(Long vehicleId) {
+        vehicleService.getVehicleById(vehicleId);
+        return serviceOrderRepository.findByVehicleId(vehicleId);
+    }
 }

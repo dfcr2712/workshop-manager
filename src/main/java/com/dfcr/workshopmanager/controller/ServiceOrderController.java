@@ -42,4 +42,9 @@ public class ServiceOrderController {
     public void deleteServiceOrder(@PathVariable Long id) {
         serviceOrderService.deleteServiceOrder(id);
     }
+
+    @GetMapping("/vehicle/{vehicleId}")
+    public List<ServiceOrder> getServiceOrdersByVehicleId(@PathVariable Long vehicleId){
+        return serviceOrderService.getServiceOrdersByVehicleId(vehicleId);
+    }
 }
