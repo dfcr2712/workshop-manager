@@ -5,6 +5,8 @@ import com.dfcr.workshopmanager.service.CustomerService;
 import org.springframework.web.bind.annotation.*;
 import com.dfcr.workshopmanager.entity.Customer;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.List;
 
@@ -44,6 +46,7 @@ public class CustomerController {
     }
 
     @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteCustomer(@PathVariable Long id){
         customerService.deleteCustomer(id);
     }
