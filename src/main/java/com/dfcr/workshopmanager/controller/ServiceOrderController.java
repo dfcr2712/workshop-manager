@@ -2,6 +2,7 @@ package com.dfcr.workshopmanager.controller;
 
 import com.dfcr.workshopmanager.entity.ServiceOrder;
 import com.dfcr.workshopmanager.service.ServiceOrderService;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,5 +36,11 @@ public class ServiceOrderController {
     public ServiceOrder updateServiceOrder(@PathVariable Long id,
                                            @RequestBody ServiceOrder updatedServiceOrder){
         return serviceOrderService.updateServiceOrder(id, updatedServiceOrder);
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteServiceOrder(@PathVariable Long id){
+        serviceOrderService.deleteServiceOrder(id);
     }
 }

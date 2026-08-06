@@ -51,5 +51,8 @@ public class ServiceOrderService {
         return serviceOrderRepository.save(existingServiceOrder);
     }
 
-
+    public void deleteServiceOrder(Long id){
+        ServiceOrder serviceOrder = getServiceOrderById(id);
+        serviceOrderRepository.delete(serviceOrder);
+    }
 }
