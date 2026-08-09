@@ -39,4 +39,8 @@ public class ServiceOrder {
     @JoinColumn(name = "vehicle_id", nullable = false)
     private Vehicle vehicle;
 
+    @ManyToOne
+    @JoinColumn(name = "mechanic_id")
+    private Mechanic mechanic;
+
 }

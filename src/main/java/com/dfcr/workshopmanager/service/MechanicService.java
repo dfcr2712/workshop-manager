@@ -3,20 +3,16 @@ package com.dfcr.workshopmanager.service;
 import com.dfcr.workshopmanager.entity.Mechanic;
 import com.dfcr.workshopmanager.exception.MechanicNotFoundException;
 import com.dfcr.workshopmanager.repository.MechanicRepository;
-import com.dfcr.workshopmanager.repository.ServiceOrderRepository;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Service
 public class MechanicService {
 
     private final MechanicRepository mechanicRepository;
-    private final ServiceOrderRepository serviceOrderRepository;
 
-    public MechanicService(MechanicRepository mechanicRepository, ServiceOrderRepository serviceOrderRepository) {
+    public MechanicService(MechanicRepository mechanicRepository) {
         this.mechanicRepository = mechanicRepository;
-        this.serviceOrderRepository = serviceOrderRepository;
     }
 
     public Mechanic createMechanic(Mechanic mechanic) {
@@ -40,18 +36,23 @@ public class MechanicService {
         existingMechanic.setSpeciality(updateMechanic.getSpeciality());
         existingMechanic.setActive(updateMechanic.isActive());
 
-        mechanicRepository.save(existingMechanic);
-
-        return existingMechanic;
+        return mechanicRepository.save(existingMechanic);
     }
 
     public void deleteMechanic(Long id) {
         mechanicRepository.delete(getMechanicById(id));
     }
 
-    public Mechanic getMechanicByName(String name) {
+    public List<Mechanic> getMechanicByName(String name) {
         return mechanicRepository.findByNameContainingIgnoreCase(name);
     }
 
+    public List<Mechanic> getMechanicBySpeciality(String speciality){
+        return mechanicRepository.findBySpecialityContainingIgnoreCase(speciality);
+    }
+
+    public List<Mechanic> getMechanicByActive(Boolean active){
+        return mechanicRepository.findByActive(active);
+    }
 
 }

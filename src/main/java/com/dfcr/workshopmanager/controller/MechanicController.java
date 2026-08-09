@@ -34,8 +34,18 @@ public class MechanicController {
     }
 
     @GetMapping("/name/{name}")
-    public Mechanic findByName(@PathVariable String name){
+    public List<Mechanic> findByName(@PathVariable String name){
         return mechanicService.getMechanicByName(name);
+    }
+
+    @GetMapping("/speciality/{speciality}")
+    public List<Mechanic> getMechanicBySpeciality(@PathVariable String speciality){
+        return mechanicService.getMechanicBySpeciality(speciality);
+    }
+
+    @GetMapping("/active/{active}")
+    public List<Mechanic> getMechanicByActive(@PathVariable boolean active){
+        return mechanicService.getMechanicByActive(active);
     }
 
     @PutMapping("/{id}")

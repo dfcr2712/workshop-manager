@@ -1,27 +1,31 @@
 package com.dfcr.workshopmanager.service;
 
+import com.dfcr.workshopmanager.entity.Mechanic;
 import com.dfcr.workshopmanager.entity.ServiceOrder;
 import com.dfcr.workshopmanager.entity.Vehicle;
 import com.dfcr.workshopmanager.enums.ServiceOrderStatus;
 import com.dfcr.workshopmanager.exception.ServiceOrderClosedException;
 import com.dfcr.workshopmanager.exception.ServiceOrderNotFoundException;
+import com.dfcr.workshopmanager.repository.MechanicRepository;
 import com.dfcr.workshopmanager.repository.ServiceOrderRepository;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ServiceOrderService {
 
     private final ServiceOrderRepository serviceOrderRepository;
     private final VehicleService vehicleService;
+    private final MechanicRepository mechanicRepository;
+    private final MechanicService mechanicService;
 
-    public ServiceOrderService(ServiceOrderRepository serviceOrderRepository, VehicleService vehicleService) {
+    public ServiceOrderService(ServiceOrderRepository serviceOrderRepository, VehicleService vehicleService, MechanicRepository mechanicRepository, MechanicService mechanicService) {
         this.serviceOrderRepository = serviceOrderRepository;
         this.vehicleService = vehicleService;
+        this.mechanicRepository = mechanicRepository;
+        this.mechanicService = mechanicService;
     }
 
     public ServiceOrder createServiceOrder(ServiceOrder serviceOrder, Long vehicleId) {
@@ -67,12 +71,25 @@ public class ServiceOrderService {
         return serviceOrderRepository.findByVehicleId(vehicleId);
     }
 
-    public List<ServiceOrder> findByStatus(ServiceOrderStatus status){
+    public List<ServiceOrder> findByStatus(ServiceOrderStatus status) {
         return serviceOrderRepository.findByStatus(status);
     }
 
-    public List<ServiceOrder> findByCreatedAtBetween(LocalDateTime starDate, LocalDateTime endDate){
+    public List<ServiceOrder> findByCreatedAtBetween(LocalDateTime starDate, LocalDateTime endDate) {
         return serviceOrderRepository.findByCreatedAtBetween(starDate, endDate);
 
+    }
+
+    public ServiceOrder assignMechanicToServiceOrder(Long orderId, Long mechanicId) {
+        ServiceOrder order = getServiceOrderById(orderId);
+        Mechanic mechanic = mechanicService.getMechanicById(mechanicId);
+
+        order.setMechanic(mechanic);
+
+        return serviceOrderRepository.save(order);
+    }
+
+    public List<ServiceOrder> findByMechanicId(Long mechanicId){
+        return serviceOrderRepository.findByMechanicId(mechanicId);
     }
 }
