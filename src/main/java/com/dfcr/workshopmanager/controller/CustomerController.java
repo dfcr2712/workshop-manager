@@ -50,4 +50,9 @@ public class CustomerController {
     public void deleteCustomer(@PathVariable Long id){
         customerService.deleteCustomer(id);
     }
+
+    @GetMapping("/name/{name}")
+    public List<Customer> findByName(@PathVariable String name){
+        return customerService.findByName(name);
+    }
 }

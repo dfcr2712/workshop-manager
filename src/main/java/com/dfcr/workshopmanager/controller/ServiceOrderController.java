@@ -1,6 +1,7 @@
 package com.dfcr.workshopmanager.controller;
 
 import com.dfcr.workshopmanager.entity.ServiceOrder;
+import com.dfcr.workshopmanager.enums.ServiceOrderStatus;
 import com.dfcr.workshopmanager.service.ServiceOrderService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -46,5 +47,10 @@ public class ServiceOrderController {
     @GetMapping("/vehicle/{vehicleId}")
     public List<ServiceOrder> getServiceOrdersByVehicleId(@PathVariable Long vehicleId){
         return serviceOrderService.getServiceOrdersByVehicleId(vehicleId);
+    }
+
+    @GetMapping("/status/{status}")
+    public List<ServiceOrder> findByStatus(@PathVariable ServiceOrderStatus status){
+        return serviceOrderService.findByStatus(status);
     }
 }

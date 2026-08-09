@@ -42,4 +42,14 @@ public class VehicleController {
     public void deleteVehicle(@PathVariable Long id){
         vehicleService.deleteVehicle(id);
     }
+
+    @GetMapping("/customer/{customerId}")
+    public List<Vehicle> findByCustomerId(@PathVariable Long customerId){
+        return vehicleService.findByCustomerId(customerId);
+    }
+
+    @GetMapping("/license-plate/{licensePlate}")
+    public Vehicle findByLicensePlate(@PathVariable String licensePlate){
+        return vehicleService.findByLicensePlate(licensePlate);
+    }
 }

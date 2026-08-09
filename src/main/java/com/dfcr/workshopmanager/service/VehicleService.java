@@ -2,14 +2,12 @@ package com.dfcr.workshopmanager.service;
 
 import com.dfcr.workshopmanager.entity.Customer;
 import com.dfcr.workshopmanager.entity.Vehicle;
-import com.dfcr.workshopmanager.exception.VehicleNotFoundException;
+import com.dfcr.workshopmanager.exception.VehicleNotFoundExceptionById;
+import com.dfcr.workshopmanager.exception.VehicleNotFoundExceptionByPlate;
 import com.dfcr.workshopmanager.repository.VehicleRepository;
-import jakarta.validation.valueextraction.UnwrapByDefault;
-import jakarta.validation.valueextraction.Unwrapping;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class VehicleService {
@@ -38,7 +36,7 @@ public class VehicleService {
     }
 
     public Vehicle getVehicleById(Long id){
-        return vehicleRepository.findById(id).orElseThrow(() -> new VehicleNotFoundException(id));
+        return vehicleRepository.findById(id).orElseThrow(() -> new VehicleNotFoundExceptionById(id));
     }
 
     public Vehicle updateVehicle(Long id, Vehicle updatedVehicle){
@@ -56,5 +54,13 @@ public class VehicleService {
     public void deleteVehicle(Long id){
         Vehicle v3 = getVehicleById(id);
         vehicleRepository.delete(v3);
+    }
+
+    public List<Vehicle> findByCustomerId(Long id){
+        return vehicleRepository.findByCustomerId(id);
+    }
+
+    public Vehicle findByLicensePlate(String licensePlate){
+        return vehicleRepository.findByLicensePlate(licensePlate).orElseThrow(() -> new VehicleNotFoundExceptionByPlate(licensePlate));
     }
 }

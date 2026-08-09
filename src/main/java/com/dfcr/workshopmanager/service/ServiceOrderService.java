@@ -65,4 +65,8 @@ public class ServiceOrderService {
         vehicleService.getVehicleById(vehicleId);
         return serviceOrderRepository.findByVehicleId(vehicleId);
     }
+
+    public List<ServiceOrder> findByStatus(ServiceOrderStatus status){
+        return serviceOrderRepository.findByStatus(status);
+    }
 }
