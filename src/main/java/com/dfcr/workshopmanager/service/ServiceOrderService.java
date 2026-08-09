@@ -8,6 +8,7 @@ import com.dfcr.workshopmanager.exception.ServiceOrderNotFoundException;
 import com.dfcr.workshopmanager.repository.ServiceOrderRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -68,5 +69,10 @@ public class ServiceOrderService {
 
     public List<ServiceOrder> findByStatus(ServiceOrderStatus status){
         return serviceOrderRepository.findByStatus(status);
+    }
+
+    public List<ServiceOrder> findByCreatedAtBetween(LocalDateTime starDate, LocalDateTime endDate){
+        return serviceOrderRepository.findByCreatedAtBetween(starDate, endDate);
+
     }
 }

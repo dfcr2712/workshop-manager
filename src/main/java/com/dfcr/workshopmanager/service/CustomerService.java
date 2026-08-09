@@ -16,11 +16,11 @@ public class CustomerService {
         this.customerRepository = customerRepository;
     }
 
-    public Customer saveCustomer(Customer customer){
+    public Customer saveCustomer(Customer customer) {
         return customerRepository.save(customer);
     }
 
-    public List<Customer> getAllCustomers(){
+    public List<Customer> getAllCustomers() {
         return customerRepository.findAll();
     }
 
@@ -29,7 +29,7 @@ public class CustomerService {
                 .orElseThrow(() -> new CustomerNotFoundException(id));
     }
 
-    public Customer updateCustomer(Long id, Customer updatedCustomer){
+    public Customer updateCustomer(Long id, Customer updatedCustomer) {
         Customer existingCustomer = getCustomerById(id);
 
         existingCustomer.setName(updatedCustomer.getName());
@@ -41,12 +41,16 @@ public class CustomerService {
         return customerRepository.save(existingCustomer);
     }
 
-    public void deleteCustomer(long id){
+    public void deleteCustomer(long id) {
         Customer c = getCustomerById(id);
         customerRepository.delete(c);
     }
 
-    public List<Customer> findByName(String name){
+    public List<Customer> findByName(String name) {
         return customerRepository.findByNameContainingIgnoreCase(name);
+    }
+
+    public Customer findByEmail(String email) {
+        return customerRepository.findByEmail(email).orElseThrow(() -> new CustomerNotFoundException(email));
     }
 }

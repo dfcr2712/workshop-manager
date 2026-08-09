@@ -2,6 +2,7 @@ package com.dfcr.workshopmanager.controller;
 
 import com.dfcr.workshopmanager.repository.CustomerRepository;
 import com.dfcr.workshopmanager.service.CustomerService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 import com.dfcr.workshopmanager.entity.Customer;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,12 +24,12 @@ public class CustomerController {
     }
 
     @PostMapping
-    public Customer createCustomer(@RequestBody Customer customer){
+    public Customer createCustomer(@RequestBody @Valid Customer customer) {
         return customerService.saveCustomer(customer);
     }
 
     @GetMapping
-    public List<Customer> getAllCustomers(){
+    public List<Customer> getAllCustomers() {
         return customerService.getAllCustomers();
     }
 
@@ -38,21 +39,24 @@ public class CustomerController {
     }
 
     @PutMapping("/{id}")
-    public Customer updateCustomer(
-            @PathVariable long id,
-            @RequestBody Customer updateCustomer) {
+    public Customer updateCustomer(@PathVariable long id, @RequestBody @Valid Customer updateCustomer) {
 
         return customerService.updateCustomer(id, updateCustomer);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteCustomer(@PathVariable Long id){
+    public void deleteCustomer(@PathVariable Long id) {
         customerService.deleteCustomer(id);
     }
 
     @GetMapping("/name/{name}")
-    public List<Customer> findByName(@PathVariable String name){
+    public List<Customer> findByName(@PathVariable String name) {
         return customerService.findByName(name);
+    }
+
+    @GetMapping("/email/{email}")
+    public Customer findByEmail(@PathVariable String email) {
+        return customerService.findByEmail(email);
     }
 }

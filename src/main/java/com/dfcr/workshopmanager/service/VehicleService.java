@@ -2,8 +2,7 @@ package com.dfcr.workshopmanager.service;
 
 import com.dfcr.workshopmanager.entity.Customer;
 import com.dfcr.workshopmanager.entity.Vehicle;
-import com.dfcr.workshopmanager.exception.VehicleNotFoundExceptionById;
-import com.dfcr.workshopmanager.exception.VehicleNotFoundExceptionByPlate;
+import com.dfcr.workshopmanager.exception.VehicleNotFoundException;
 import com.dfcr.workshopmanager.repository.VehicleRepository;
 import org.springframework.stereotype.Service;
 
@@ -36,7 +35,7 @@ public class VehicleService {
     }
 
     public Vehicle getVehicleById(Long id){
-        return vehicleRepository.findById(id).orElseThrow(() -> new VehicleNotFoundExceptionById(id));
+        return vehicleRepository.findById(id).orElseThrow(() -> new VehicleNotFoundException(id));
     }
 
     public Vehicle updateVehicle(Long id, Vehicle updatedVehicle){
@@ -61,6 +60,6 @@ public class VehicleService {
     }
 
     public Vehicle findByLicensePlate(String licensePlate){
-        return vehicleRepository.findByLicensePlate(licensePlate).orElseThrow(() -> new VehicleNotFoundExceptionByPlate(licensePlate));
+        return vehicleRepository.findByLicensePlate(licensePlate).orElseThrow(() -> new VehicleNotFoundException(licensePlate));
     }
 }

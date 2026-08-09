@@ -2,6 +2,7 @@ package com.dfcr.workshopmanager.controller;
 
 import com.dfcr.workshopmanager.entity.Vehicle;
 import com.dfcr.workshopmanager.service.VehicleService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +19,7 @@ public class VehicleController {
     }
 
     @PostMapping("/customer/{customerId}")
-    public Vehicle createVehicle(@PathVariable Long customerId, @RequestBody Vehicle vehicle) {
+    public Vehicle createVehicle(@PathVariable Long customerId, @RequestBody @Valid Vehicle vehicle) {
         return vehicleService.saveVehicle(vehicle, customerId);
     }
 
@@ -33,7 +34,7 @@ public class VehicleController {
     }
 
     @PutMapping("/{id}")
-    public Vehicle updateVehicle(@PathVariable Long id, @RequestBody Vehicle updatedVehicle){
+    public Vehicle updateVehicle(@PathVariable Long id, @RequestBody @Valid Vehicle updatedVehicle){
         return vehicleService.updateVehicle(id, updatedVehicle);
     }
 

@@ -8,4 +8,8 @@ public class CustomerNotFoundException extends RuntimeException {
     public CustomerNotFoundException(Long id) {
         super("Customer with id " + id + " not found");
     }
+
+    public CustomerNotFoundException(String email) {
+        super("Customer wih email " + email + " not found");
+    }
 }

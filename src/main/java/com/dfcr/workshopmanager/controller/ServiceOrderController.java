@@ -3,9 +3,13 @@ package com.dfcr.workshopmanager.controller;
 import com.dfcr.workshopmanager.entity.ServiceOrder;
 import com.dfcr.workshopmanager.enums.ServiceOrderStatus;
 import com.dfcr.workshopmanager.service.ServiceOrderService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @RestController
@@ -19,7 +23,7 @@ public class ServiceOrderController {
     }
 
     @PostMapping("/vehicle/{vehicleId}")
-    public ServiceOrder createServiceOrder(@PathVariable Long vehicleId, @RequestBody ServiceOrder serviceOrder) {
+    public ServiceOrder createServiceOrder(@PathVariable Long vehicleId, @RequestBody @Valid ServiceOrder serviceOrder) {
         return serviceOrderService.createServiceOrder(serviceOrder, vehicleId);
     }
 
@@ -34,7 +38,7 @@ public class ServiceOrderController {
     }
 
     @PutMapping("/{id}")
-    public ServiceOrder updateServiceOrder(@PathVariable Long id, @RequestBody ServiceOrder updatedServiceOrder) {
+    public ServiceOrder updateServiceOrder(@PathVariable Long id, @RequestBody @Valid ServiceOrder updatedServiceOrder) {
         return serviceOrderService.updateServiceOrder(id, updatedServiceOrder);
     }
 
@@ -52,5 +56,12 @@ public class ServiceOrderController {
     @GetMapping("/status/{status}")
     public List<ServiceOrder> findByStatus(@PathVariable ServiceOrderStatus status){
         return serviceOrderService.findByStatus(status);
+    }
+
+    @GetMapping("/dates/{startDate}/{endDate}")
+    public List<ServiceOrder> findByCreatedAtBetween(@PathVariable LocalDate startDate, @PathVariable LocalDate endDate){
+        LocalDateTime start = startDate.atStartOfDay();
+        LocalDateTime end = endDate.atTime(LocalTime.MAX);
+        return serviceOrderService.findByCreatedAtBetween(start,end);
     }
 }
