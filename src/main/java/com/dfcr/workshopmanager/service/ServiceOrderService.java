@@ -18,13 +18,11 @@ public class ServiceOrderService {
 
     private final ServiceOrderRepository serviceOrderRepository;
     private final VehicleService vehicleService;
-    private final MechanicRepository mechanicRepository;
     private final MechanicService mechanicService;
 
-    public ServiceOrderService(ServiceOrderRepository serviceOrderRepository, VehicleService vehicleService, MechanicRepository mechanicRepository, MechanicService mechanicService) {
+    public ServiceOrderService(ServiceOrderRepository serviceOrderRepository, VehicleService vehicleService, MechanicService mechanicService) {
         this.serviceOrderRepository = serviceOrderRepository;
         this.vehicleService = vehicleService;
-        this.mechanicRepository = mechanicRepository;
         this.mechanicService = mechanicService;
     }
 
