@@ -2,7 +2,7 @@ package com.dfcr.workshopmanager.service;
 
 import com.dfcr.workshopmanager.entity.ServiceOrder;
 import com.dfcr.workshopmanager.entity.Task;
-import com.dfcr.workshopmanager.exception.TaskServiceNotFoundException;
+import com.dfcr.workshopmanager.exception.TaskNotFoundException;
 import com.dfcr.workshopmanager.repository.TaskRepository;
 import org.springframework.stereotype.Service;
 
@@ -27,10 +27,11 @@ public class TaskService {
     }
 
     public Task getTaskById(Long id){
-        return taskRepository.findById(id).orElseThrow(() -> new TaskServiceNotFoundException(id));
+        return taskRepository.findById(id).orElseThrow(() -> new TaskNotFoundException(id));
     }
 
     public List<Task> getTasksByServiceOrderId(Long serviceOrderId){
+        serviceOrderService.getServiceOrderById(serviceOrderId);
         return taskRepository.findByServiceOrderId(serviceOrderId);
     }
 
