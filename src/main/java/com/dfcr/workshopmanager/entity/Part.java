@@ -35,8 +35,6 @@ public class Part {
     @PositiveOrZero
     private BigDecimal stockQuantity;
 
-
     private boolean active;
-
 
 }

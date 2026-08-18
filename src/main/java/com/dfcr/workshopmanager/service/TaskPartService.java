@@ -30,7 +30,8 @@ public class TaskPartService {
 
     public TaskPart createTaskPart(Long taskId, Long partId, BigDecimal quantity) {
         Task task = taskRepository.findById(taskId).orElseThrow(() -> new TaskNotFoundException(taskId));
-        Part part = partRepository.findById(partId).orElseThrow(() -> new PartNotFoundException(partId));
+        Part part = partRepository.findById(partId).orElseThrow(() -> new PartNotFoundException("Part not found with id " +
+                partId));
 
         TaskPart taskPart = new TaskPart();
         taskPart.setTask(task);
