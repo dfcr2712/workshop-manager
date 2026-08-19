@@ -3,6 +3,7 @@ package com.dfcr.workshopmanager.service;
 import com.dfcr.workshopmanager.entity.Part;
 import com.dfcr.workshopmanager.entity.Task;
 import com.dfcr.workshopmanager.entity.TaskPart;
+import com.dfcr.workshopmanager.exception.InsufficientStockException;
 import com.dfcr.workshopmanager.exception.PartNotFoundException;
 import com.dfcr.workshopmanager.exception.TaskNotFoundException;
 import com.dfcr.workshopmanager.exception.TaskPartNotFoundException;
@@ -10,6 +11,7 @@ import com.dfcr.workshopmanager.repository.PartRepository;
 import com.dfcr.workshopmanager.repository.TaskPartRepository;
 import com.dfcr.workshopmanager.repository.TaskRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -28,10 +30,22 @@ public class TaskPartService {
 
     }
 
+    // Com transactional ou corre tudo bem ou não fica nada gravado
+    @Transactional
     public TaskPart createTaskPart(Long taskId, Long partId, BigDecimal quantity) {
         Task task = taskRepository.findById(taskId).orElseThrow(() -> new TaskNotFoundException(taskId));
-        Part part = partRepository.findById(partId).orElseThrow(() -> new PartNotFoundException("Part not found with id " +
-                partId));
+        Part part = partRepository.findById(partId).orElseThrow(() -> new PartNotFoundException("Part not found with id " + partId));
+
+        if (quantity == null || quantity.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Quantity must be greather than zero.");
+        }
+        if (part.getStockQuantity().compareTo(quantity) < 0) {
+            throw new InsufficientStockException(quantity);
+        } else {
+            BigDecimal newStock = part.getStockQuantity().subtract(quantity);
+            part.setStockQuantity(newStock);
+            partRepository.save(part);
+        }
 
         TaskPart taskPart = new TaskPart();
         taskPart.setTask(task);
@@ -47,8 +61,16 @@ public class TaskPartService {
         return taskPartRepository.findByTaskId(taskId);
     }
 
+    @Transactional
     public void deleteTaskPart(Long taskPartId) {
         TaskPart taskPart = taskPartRepository.findById((taskPartId)).orElseThrow(() -> new TaskPartNotFoundException(taskPartId));
+
+        Part part = taskPart.getPart();
+        BigDecimal restoredStock = part.getStockQuantity().add(taskPart.getQuantity());
+
+        part.setStockQuantity(restoredStock);
+        partRepository.save(part);
+
         taskPartRepository.delete(taskPart);
     }
 
