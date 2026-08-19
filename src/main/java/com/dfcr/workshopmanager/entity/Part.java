@@ -2,6 +2,7 @@ package com.dfcr.workshopmanager.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Getter;
@@ -29,10 +30,14 @@ public class Part {
     @Column(nullable = false, unique = true)
     private String reference;
 
+    @NotNull
     @Positive
+    @Column(nullable = false)
     private BigDecimal unitPrice;
 
+    @NotNull
     @PositiveOrZero
+    @Column(nullable = false)
     private BigDecimal stockQuantity;
 
     private boolean active;
