@@ -78,9 +78,36 @@ public class TaskPartService {
         return taskPartRepository.findById(taskPartId).orElseThrow(() -> new TaskPartNotFoundException(taskPartId));
     }
 
+    /**
+     * Mantém TaskPart e stock sincronizados quando corrijo a quantidade
+     * de uma peça já utilizada.
+     * Se aumentar, retirar apenas a diferença ao stock, não permitindo que o aumento
+     * ultrapasse o stock disponivel.
+     * Se diminuir, devolver a diferença ao stock.
+     */
+    @Transactional
     public TaskPart updateTaskPartQuantity(Long taskPartid, BigDecimal quantity) {
+        if(quantity == null || quantity.compareTo(BigDecimal.ZERO) <= 0){
+            throw new IllegalArgumentException("Quantity must be greater than zero");
+        }
         TaskPart existingTaskPart = getTaskPartById(taskPartid);
+
+        BigDecimal oldQuantity = existingTaskPart.getQuantity();
+
+        Part part = existingTaskPart.getPart();
+
+        BigDecimal difference = quantity.subtract(oldQuantity);
+
+        if (difference.compareTo(BigDecimal.ZERO) > 0) {
+            if (part.getStockQuantity().compareTo(difference) < 0) {
+                throw new InsufficientStockException(difference);
+            }
+            part.setStockQuantity(part.getStockQuantity().subtract(difference));
+        } else if (difference.compareTo(BigDecimal.ZERO) < 0) {
+            part.setStockQuantity(part.getStockQuantity().add(difference.abs()));
+        }
         existingTaskPart.setQuantity(quantity);
+
         return taskPartRepository.save(existingTaskPart);
     }
 
