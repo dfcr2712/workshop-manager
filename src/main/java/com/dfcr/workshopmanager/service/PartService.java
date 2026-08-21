@@ -5,6 +5,7 @@ import com.dfcr.workshopmanager.exception.PartNotFoundException;
 import com.dfcr.workshopmanager.repository.PartRepository;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -53,9 +54,25 @@ public class PartService {
         existingPart.setStockQuantity(updatePart.getStockQuantity());
         existingPart.setUnitPrice(updatePart.getUnitPrice());
         existingPart.setActive(updatePart.isActive());
+        existingPart.setMinimumStock(updatePart.getMinimumStock());
 
         return partRepository.save(existingPart);
     }
 
+    public Part addStock(Long id, BigDecimal quantity) {
+        if (quantity == null || quantity.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Quantity must be greater than zero.");
+        }
 
+        Part foundPart = partRepository.findById(id).
+                orElseThrow(() -> new PartNotFoundException("Part with id " + id + " not found."));
+
+        BigDecimal newStock = foundPart.getStockQuantity().add(quantity);
+        foundPart.setStockQuantity(newStock);
+        return partRepository.save(foundPart);
+    }
+
+    public List<Part> findLowStockParts(){
+        return partRepository.findLowStockParts();
+    }
 }

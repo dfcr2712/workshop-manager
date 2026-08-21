@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -55,5 +56,13 @@ public class PartController {
         partService.deletePart(id);
     }
 
+    @PutMapping("/{id}/stock/add/{quantity}")
+    public Part addStock(@PathVariable Long id, @PathVariable BigDecimal quantity){
+        return partService.addStock(id, quantity);
+    }
 
+    @GetMapping("/low-stock")
+    public List<Part> getLowStockParts(){
+        return partService.findLowStockParts();
+    }
 }

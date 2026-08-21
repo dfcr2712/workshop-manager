@@ -40,6 +40,11 @@ public class Part {
     @Column(nullable = false)
     private BigDecimal stockQuantity;
 
+    @NotNull
+    @PositiveOrZero
+    @Column(nullable = false)
+    private BigDecimal minimumStock;
+
     private boolean active;
 
 }
