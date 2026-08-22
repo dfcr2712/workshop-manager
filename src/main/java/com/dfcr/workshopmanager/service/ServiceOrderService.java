@@ -1,15 +1,18 @@
 package com.dfcr.workshopmanager.service;
 
+import com.dfcr.workshopmanager.dto.ServiceOrderCosts;
 import com.dfcr.workshopmanager.entity.Mechanic;
 import com.dfcr.workshopmanager.entity.ServiceOrder;
+import com.dfcr.workshopmanager.entity.Task;
 import com.dfcr.workshopmanager.entity.Vehicle;
 import com.dfcr.workshopmanager.enums.ServiceOrderStatus;
 import com.dfcr.workshopmanager.exception.ServiceOrderClosedException;
 import com.dfcr.workshopmanager.exception.ServiceOrderNotFoundException;
-import com.dfcr.workshopmanager.repository.MechanicRepository;
 import com.dfcr.workshopmanager.repository.ServiceOrderRepository;
+import com.dfcr.workshopmanager.repository.TaskRepository;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -19,11 +22,15 @@ public class ServiceOrderService {
     private final ServiceOrderRepository serviceOrderRepository;
     private final VehicleService vehicleService;
     private final MechanicService mechanicService;
+    private final TaskRepository taskRepository;
+    private final TaskPartService taskPartService;
 
-    public ServiceOrderService(ServiceOrderRepository serviceOrderRepository, VehicleService vehicleService, MechanicService mechanicService) {
+    public ServiceOrderService(ServiceOrderRepository serviceOrderRepository, VehicleService vehicleService, MechanicService mechanicService, TaskRepository taskRepository, TaskPartService taskPartService) {
         this.serviceOrderRepository = serviceOrderRepository;
         this.vehicleService = vehicleService;
         this.mechanicService = mechanicService;
+        this.taskRepository = taskRepository;
+        this.taskPartService = taskPartService;
     }
 
     public ServiceOrder createServiceOrder(ServiceOrder serviceOrder, Long vehicleId) {
@@ -87,7 +94,44 @@ public class ServiceOrderService {
         return serviceOrderRepository.save(order);
     }
 
-    public List<ServiceOrder> findByMechanicId(Long mechanicId){
+    public List<ServiceOrder> findByMechanicId(Long mechanicId) {
         return serviceOrderRepository.findByMechanicId(mechanicId);
+    }
+
+    public BigDecimal calculateLaborTotal(Long serviceOrderId) {
+        ServiceOrder order = serviceOrderRepository.findById(serviceOrderId).
+                orElseThrow(() -> new ServiceOrderNotFoundException(serviceOrderId));
+
+        List<Task> tasks = taskRepository.findByServiceOrderId(serviceOrderId);
+        BigDecimal total = BigDecimal.ZERO;
+        for (int i = 0; i < tasks.size(); i++) {
+            Task task = tasks.get(i);
+            total = total.add(task.laborCost());
+        }
+        return total;
+    }
+
+    public BigDecimal calculatePartsTotal(Long serviceOrderId) {
+        ServiceOrder order = serviceOrderRepository.findById(serviceOrderId).
+                orElseThrow(() -> new ServiceOrderNotFoundException(serviceOrderId));
+
+        List<Task> tasks = taskRepository.findByServiceOrderId(serviceOrderId);
+
+        BigDecimal total = BigDecimal.ZERO;
+
+        for (int i = 0; i < tasks.size(); i++) {
+            Task task = tasks.get(i);
+            total = total.add(taskPartService.calculateMaterialCost(task.getId()));
+        }
+        return total;
+    }
+    
+    public ServiceOrderCosts getServiceOrderCosts(Long serviceOrderId){
+        
+        BigDecimal laborTotal = calculateLaborTotal(serviceOrderId);
+        BigDecimal partsTotal = calculatePartsTotal(serviceOrderId);
+        BigDecimal total = laborTotal.add(partsTotal);
+        
+        return new ServiceOrderCosts(laborTotal, partsTotal, total);
     }
 }

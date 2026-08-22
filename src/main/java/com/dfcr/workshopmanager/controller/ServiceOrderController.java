@@ -1,9 +1,8 @@
 package com.dfcr.workshopmanager.controller;
 
+import com.dfcr.workshopmanager.dto.ServiceOrderCosts;
 import com.dfcr.workshopmanager.entity.ServiceOrder;
 import com.dfcr.workshopmanager.enums.ServiceOrderStatus;
-import com.dfcr.workshopmanager.repository.MechanicRepository;
-import com.dfcr.workshopmanager.repository.ServiceOrderRepository;
 import com.dfcr.workshopmanager.service.ServiceOrderService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -19,13 +18,9 @@ import java.util.List;
 public class ServiceOrderController {
 
     private final ServiceOrderService serviceOrderService;
-    private final ServiceOrderRepository serviceOrderRepository;
-    private final MechanicRepository mechanicRepository;
 
-    public ServiceOrderController(ServiceOrderService serviceOrderService, ServiceOrderRepository serviceOrderRepository, MechanicRepository mechanicRepository) {
+    public ServiceOrderController(ServiceOrderService serviceOrderService) {
         this.serviceOrderService = serviceOrderService;
-        this.serviceOrderRepository = serviceOrderRepository;
-        this.mechanicRepository = mechanicRepository;
     }
 
     @PostMapping("/vehicle/{vehicleId}")
@@ -79,6 +74,11 @@ public class ServiceOrderController {
     @GetMapping("/mechanic/{mechanicId}")
     public List<ServiceOrder> mechanicOrders(@PathVariable Long mechanicId){
         return serviceOrderService.findByMechanicId(mechanicId);
+    }
+
+    @GetMapping("/{id}/costs")
+    public ServiceOrderCosts getServiceOrderCosts(@PathVariable Long id) {
+        return serviceOrderService.getServiceOrderCosts(id);
     }
 
 }
