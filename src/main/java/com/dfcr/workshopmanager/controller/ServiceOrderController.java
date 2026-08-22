@@ -81,4 +81,16 @@ public class ServiceOrderController {
         return serviceOrderService.getServiceOrderCosts(id);
     }
 
+    @PutMapping("/{id}/estimate/approve")
+    public ServiceOrder approveEstimate(@PathVariable Long id){
+        return serviceOrderService.approveEstimate(id);
+    }
+
+    @PutMapping("/{id}/estimate/reject")
+    public ServiceOrder rejectEstimate(@PathVariable Long id){
+        return serviceOrderService.rejectEstimate(id);
+    }
+
+
+
 }

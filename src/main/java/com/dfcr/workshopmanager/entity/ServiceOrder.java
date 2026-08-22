@@ -1,5 +1,6 @@
 package com.dfcr.workshopmanager.entity;
 
+import com.dfcr.workshopmanager.enums.EstimateStatus;
 import com.dfcr.workshopmanager.enums.ServiceOrderStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -7,7 +8,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import java.time.LocalDateTime;
 
 @Entity
@@ -42,5 +42,8 @@ public class ServiceOrder {
     @ManyToOne
     @JoinColumn(name = "mechanic_id")
     private Mechanic mechanic;
+
+    @Enumerated(EnumType.STRING)
+    private EstimateStatus estimateStatus;
 
 }

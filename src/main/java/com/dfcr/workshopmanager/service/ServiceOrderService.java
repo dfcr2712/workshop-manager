@@ -5,6 +5,7 @@ import com.dfcr.workshopmanager.entity.Mechanic;
 import com.dfcr.workshopmanager.entity.ServiceOrder;
 import com.dfcr.workshopmanager.entity.Task;
 import com.dfcr.workshopmanager.entity.Vehicle;
+import com.dfcr.workshopmanager.enums.EstimateStatus;
 import com.dfcr.workshopmanager.enums.ServiceOrderStatus;
 import com.dfcr.workshopmanager.exception.ServiceOrderClosedException;
 import com.dfcr.workshopmanager.exception.ServiceOrderNotFoundException;
@@ -39,6 +40,7 @@ public class ServiceOrderService {
         serviceOrder.setVehicle(vehicle);
         serviceOrder.setStatus(ServiceOrderStatus.OPEN);
         serviceOrder.setCreatedAt(LocalDateTime.now());
+        serviceOrder.setEstimateStatus(EstimateStatus.PENDING);
 
         return serviceOrderRepository.save(serviceOrder);
     }
@@ -133,5 +135,21 @@ public class ServiceOrderService {
         BigDecimal total = laborTotal.add(partsTotal);
         
         return new ServiceOrderCosts(laborTotal, partsTotal, total);
+    }
+
+    public ServiceOrder approveEstimate(Long serviceOrderId){
+        ServiceOrder order = serviceOrderRepository.findById(serviceOrderId).
+                orElseThrow(() -> new ServiceOrderNotFoundException(serviceOrderId));
+
+        order.setEstimateStatus(EstimateStatus.APPROVED);
+        return serviceOrderRepository.save(order);
+    }
+
+    public ServiceOrder rejectEstimate(Long serviceOrderId){
+        ServiceOrder order = serviceOrderRepository.findById(serviceOrderId).
+                orElseThrow(() -> new ServiceOrderNotFoundException(serviceOrderId));
+
+        order.setEstimateStatus(EstimateStatus.REJECTED);
+        return serviceOrderRepository.save(order);
     }
 }
