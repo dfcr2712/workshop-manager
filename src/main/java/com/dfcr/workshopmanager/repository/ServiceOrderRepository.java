@@ -12,6 +12,7 @@ public interface ServiceOrderRepository extends JpaRepository<ServiceOrder, Long
    List<ServiceOrder> findByStatus(ServiceOrderStatus status);
    List<ServiceOrder> findByCreatedAtBetween(LocalDateTime startDate, LocalDateTime endDate);
    List<ServiceOrder> findByMechanicId(Long mechanicId);
+   List<ServiceOrder> findByVehicleIdOrderByCreatedAtDesc(Long vehicleId);
 
 }
 

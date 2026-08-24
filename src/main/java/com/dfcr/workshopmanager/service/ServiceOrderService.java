@@ -152,4 +152,10 @@ public class ServiceOrderService {
         order.setEstimateStatus(EstimateStatus.REJECTED);
         return serviceOrderRepository.save(order);
     }
+
+    public List<ServiceOrder> getVehicleHistory(Long vehicleId){
+        vehicleService.getVehicleById(vehicleId);
+
+        return serviceOrderRepository.findByVehicleIdOrderByCreatedAtDesc(vehicleId);
+    }
 }

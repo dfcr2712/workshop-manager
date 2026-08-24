@@ -1,6 +1,8 @@
 package com.dfcr.workshopmanager.controller;
 
+import com.dfcr.workshopmanager.entity.ServiceOrder;
 import com.dfcr.workshopmanager.entity.Vehicle;
+import com.dfcr.workshopmanager.service.ServiceOrderService;
 import com.dfcr.workshopmanager.service.VehicleService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -13,9 +15,11 @@ import java.util.List;
 public class VehicleController {
 
     private final VehicleService vehicleService;
+    private final ServiceOrderService serviceOrderService;
 
-    public VehicleController(VehicleService vehicleService) {
+    public VehicleController(VehicleService vehicleService, ServiceOrderService serviceOrderService) {
         this.vehicleService = vehicleService;
+        this.serviceOrderService = serviceOrderService;
     }
 
     @PostMapping("/customer/{customerId}")
@@ -52,5 +56,10 @@ public class VehicleController {
     @GetMapping("/license-plate/{licensePlate}")
     public Vehicle findByLicensePlate(@PathVariable String licensePlate){
         return vehicleService.findByLicensePlate(licensePlate);
+    }
+
+    @GetMapping("/{vehicleId}/history")
+    public List<ServiceOrder> getVehicleHistory(@PathVariable Long vehicleId){
+        return serviceOrderService.getVehicleHistory(vehicleId);
     }
 }
