@@ -1,6 +1,7 @@
 package com.dfcr.workshopmanager.repository;
 
 import com.dfcr.workshopmanager.entity.ServiceOrder;
+import com.dfcr.workshopmanager.enums.ServiceOrderPriority;
 import com.dfcr.workshopmanager.enums.ServiceOrderStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.time.LocalDateTime;
@@ -13,6 +14,7 @@ public interface ServiceOrderRepository extends JpaRepository<ServiceOrder, Long
    List<ServiceOrder> findByCreatedAtBetween(LocalDateTime startDate, LocalDateTime endDate);
    List<ServiceOrder> findByMechanicId(Long mechanicId);
    List<ServiceOrder> findByVehicleIdOrderByCreatedAtDesc(Long vehicleId);
+   List<ServiceOrder> findByPriority(ServiceOrderPriority priority);
 
 }
 

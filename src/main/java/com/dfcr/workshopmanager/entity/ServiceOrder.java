@@ -1,6 +1,7 @@
 package com.dfcr.workshopmanager.entity;
 
 import com.dfcr.workshopmanager.enums.EstimateStatus;
+import com.dfcr.workshopmanager.enums.ServiceOrderPriority;
 import com.dfcr.workshopmanager.enums.ServiceOrderStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -53,4 +54,6 @@ public class ServiceOrder {
     @Column(nullable = false)
     private Long mileage;
 
+    @Enumerated(EnumType.STRING)
+    private ServiceOrderPriority priority;
 }

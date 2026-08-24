@@ -6,6 +6,7 @@ import com.dfcr.workshopmanager.entity.ServiceOrder;
 import com.dfcr.workshopmanager.entity.Task;
 import com.dfcr.workshopmanager.entity.Vehicle;
 import com.dfcr.workshopmanager.enums.EstimateStatus;
+import com.dfcr.workshopmanager.enums.ServiceOrderPriority;
 import com.dfcr.workshopmanager.enums.ServiceOrderStatus;
 import com.dfcr.workshopmanager.exception.ServiceOrderClosedException;
 import com.dfcr.workshopmanager.exception.ServiceOrderNotFoundException;
@@ -41,6 +42,7 @@ public class ServiceOrderService {
         serviceOrder.setStatus(ServiceOrderStatus.OPEN);
         serviceOrder.setCreatedAt(LocalDateTime.now());
         serviceOrder.setEstimateStatus(EstimateStatus.PENDING);
+        serviceOrder.setPriority(ServiceOrderPriority.NORMAL);
 
         return serviceOrderRepository.save(serviceOrder);
     }
@@ -157,5 +159,16 @@ public class ServiceOrderService {
         vehicleService.getVehicleById(vehicleId);
 
         return serviceOrderRepository.findByVehicleIdOrderByCreatedAtDesc(vehicleId);
+    }
+
+    public List<ServiceOrder> getServiceOrdersByPriority(ServiceOrderPriority priority){
+        return serviceOrderRepository.findByPriority(priority);
+    }
+
+    public ServiceOrder updatePriority(Long serviceOrderId, ServiceOrderPriority priority){
+        ServiceOrder existingOrder = getServiceOrderById(serviceOrderId);
+
+        existingOrder.setPriority(priority);
+        return serviceOrderRepository.save(existingOrder);
     }
 }

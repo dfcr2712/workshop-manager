@@ -2,6 +2,7 @@ package com.dfcr.workshopmanager.controller;
 
 import com.dfcr.workshopmanager.dto.ServiceOrderCosts;
 import com.dfcr.workshopmanager.entity.ServiceOrder;
+import com.dfcr.workshopmanager.enums.ServiceOrderPriority;
 import com.dfcr.workshopmanager.enums.ServiceOrderStatus;
 import com.dfcr.workshopmanager.service.ServiceOrderService;
 import jakarta.validation.Valid;
@@ -50,29 +51,29 @@ public class ServiceOrderController {
     }
 
     @GetMapping("/vehicle/{vehicleId}")
-    public List<ServiceOrder> getServiceOrdersByVehicleId(@PathVariable Long vehicleId){
+    public List<ServiceOrder> getServiceOrdersByVehicleId(@PathVariable Long vehicleId) {
         return serviceOrderService.getServiceOrdersByVehicleId(vehicleId);
     }
 
     @GetMapping("/status/{status}")
-    public List<ServiceOrder> findByStatus(@PathVariable ServiceOrderStatus status){
+    public List<ServiceOrder> findByStatus(@PathVariable ServiceOrderStatus status) {
         return serviceOrderService.findByStatus(status);
     }
 
     @GetMapping("/dates/{startDate}/{endDate}")
-    public List<ServiceOrder> findByCreatedAtBetween(@PathVariable LocalDate startDate, @PathVariable LocalDate endDate){
+    public List<ServiceOrder> findByCreatedAtBetween(@PathVariable LocalDate startDate, @PathVariable LocalDate endDate) {
         LocalDateTime start = startDate.atStartOfDay();
         LocalDateTime end = endDate.atTime(LocalTime.MAX);
-        return serviceOrderService.findByCreatedAtBetween(start,end);
+        return serviceOrderService.findByCreatedAtBetween(start, end);
     }
 
     @PutMapping("/{orderId}/mechanic/{mechanicId}")
-    public ServiceOrder assignMechanicToServiceOrder(@PathVariable Long orderId, @PathVariable Long mechanicId){
+    public ServiceOrder assignMechanicToServiceOrder(@PathVariable Long orderId, @PathVariable Long mechanicId) {
         return serviceOrderService.assignMechanicToServiceOrder(orderId, mechanicId);
     }
 
     @GetMapping("/mechanic/{mechanicId}")
-    public List<ServiceOrder> mechanicOrders(@PathVariable Long mechanicId){
+    public List<ServiceOrder> mechanicOrders(@PathVariable Long mechanicId) {
         return serviceOrderService.findByMechanicId(mechanicId);
     }
 
@@ -82,13 +83,22 @@ public class ServiceOrderController {
     }
 
     @PutMapping("/{id}/estimate/approve")
-    public ServiceOrder approveEstimate(@PathVariable Long id){
+    public ServiceOrder approveEstimate(@PathVariable Long id) {
         return serviceOrderService.approveEstimate(id);
     }
 
     @PutMapping("/{id}/estimate/reject")
-    public ServiceOrder rejectEstimate(@PathVariable Long id){
+    public ServiceOrder rejectEstimate(@PathVariable Long id) {
         return serviceOrderService.rejectEstimate(id);
     }
 
+    @GetMapping("/priority/{priority}")
+    public List<ServiceOrder> getServiceOrdersByPriority(@PathVariable ServiceOrderPriority priority) {
+        return serviceOrderService.getServiceOrdersByPriority(priority);
+    }
+
+    @PutMapping("/{id}/priority/{priority}")
+    public ServiceOrder updatePriority(@PathVariable Long id, @PathVariable ServiceOrderPriority priority) {
+        return serviceOrderService.updatePriority(id, priority);
+    }
 }
