@@ -87,7 +87,9 @@ public class ServiceOrderService {
     public ServiceOrder assignMechanicToServiceOrder(Long orderId, Long mechanicId) {
         ServiceOrder order = getServiceOrderById(orderId);
         Mechanic mechanic = mechanicService.getMechanicById(mechanicId);
-
+        if(!mechanic.isActive()){
+            throw new IllegalArgumentException("Inactive mechanic cannot be assigned to a service order.");
+        }
         order.setMechanic(mechanic);
 
         return serviceOrderRepository.save(order);
@@ -184,6 +186,7 @@ public class ServiceOrderService {
         }
 
         if (status == ServiceOrderStatus.COMPLETED) {
+            validateTasksBeforeCompletion(id);
             existingOrder.setCompletedAt(LocalDateTime.now());
         }
 
@@ -214,6 +217,14 @@ public class ServiceOrderService {
 
         if (currentStatus == ServiceOrderStatus.COMPLETED || currentStatus == ServiceOrderStatus.CANCELLED) {
             throw new IllegalArgumentException("Invalid status transition from " + currentStatus + " to " + newStatus);
+        }
+    }
+
+    private void validateTasksBeforeCompletion(Long serviceOrderId) {
+        List<Task> tasks = taskRepository.findByServiceOrderId(serviceOrderId);
+
+        if (tasks.isEmpty()) {
+            throw new IllegalArgumentException("Service order with id " + serviceOrderId + " dont have tasks.");
         }
     }
 }
