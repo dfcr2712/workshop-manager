@@ -56,4 +56,8 @@ public class ServiceOrder {
 
     @Enumerated(EnumType.STRING)
     private ServiceOrderPriority priority;
+
+    private LocalDateTime startedAt;
+
+    private LocalDateTime expectedCompletionAt;
 }

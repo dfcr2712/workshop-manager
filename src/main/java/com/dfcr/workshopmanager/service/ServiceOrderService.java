@@ -61,11 +61,6 @@ public class ServiceOrderService {
             throw new ServiceOrderClosedException(id);
         }
 
-        if (updatedServiceOrder.getStatus() == ServiceOrderStatus.COMPLETED) {
-            existingServiceOrder.setCompletedAt(LocalDateTime.now());
-        }
-
-        existingServiceOrder.setStatus(updatedServiceOrder.getStatus());
         existingServiceOrder.setDescription(updatedServiceOrder.getDescription());
         return serviceOrderRepository.save(existingServiceOrder);
     }
@@ -103,8 +98,7 @@ public class ServiceOrderService {
     }
 
     public BigDecimal calculateLaborTotal(Long serviceOrderId) {
-        ServiceOrder order = serviceOrderRepository.findById(serviceOrderId).
-                orElseThrow(() -> new ServiceOrderNotFoundException(serviceOrderId));
+        ServiceOrder order = serviceOrderRepository.findById(serviceOrderId).orElseThrow(() -> new ServiceOrderNotFoundException(serviceOrderId));
 
         List<Task> tasks = taskRepository.findByServiceOrderId(serviceOrderId);
         BigDecimal total = BigDecimal.ZERO;
@@ -116,8 +110,7 @@ public class ServiceOrderService {
     }
 
     public BigDecimal calculatePartsTotal(Long serviceOrderId) {
-        ServiceOrder order = serviceOrderRepository.findById(serviceOrderId).
-                orElseThrow(() -> new ServiceOrderNotFoundException(serviceOrderId));
+        ServiceOrder order = serviceOrderRepository.findById(serviceOrderId).orElseThrow(() -> new ServiceOrderNotFoundException(serviceOrderId));
 
         List<Task> tasks = taskRepository.findByServiceOrderId(serviceOrderId);
 
@@ -129,46 +122,70 @@ public class ServiceOrderService {
         }
         return total;
     }
-    
-    public ServiceOrderCosts getServiceOrderCosts(Long serviceOrderId){
-        
+
+    public ServiceOrderCosts getServiceOrderCosts(Long serviceOrderId) {
+
         BigDecimal laborTotal = calculateLaborTotal(serviceOrderId);
         BigDecimal partsTotal = calculatePartsTotal(serviceOrderId);
         BigDecimal total = laborTotal.add(partsTotal);
-        
+
         return new ServiceOrderCosts(laborTotal, partsTotal, total);
     }
 
-    public ServiceOrder approveEstimate(Long serviceOrderId){
-        ServiceOrder order = serviceOrderRepository.findById(serviceOrderId).
-                orElseThrow(() -> new ServiceOrderNotFoundException(serviceOrderId));
+    public ServiceOrder approveEstimate(Long serviceOrderId) {
+        ServiceOrder order = serviceOrderRepository.findById(serviceOrderId).orElseThrow(() -> new ServiceOrderNotFoundException(serviceOrderId));
 
         order.setEstimateStatus(EstimateStatus.APPROVED);
         return serviceOrderRepository.save(order);
     }
 
-    public ServiceOrder rejectEstimate(Long serviceOrderId){
-        ServiceOrder order = serviceOrderRepository.findById(serviceOrderId).
-                orElseThrow(() -> new ServiceOrderNotFoundException(serviceOrderId));
+    public ServiceOrder rejectEstimate(Long serviceOrderId) {
+        ServiceOrder order = serviceOrderRepository.findById(serviceOrderId).orElseThrow(() -> new ServiceOrderNotFoundException(serviceOrderId));
 
         order.setEstimateStatus(EstimateStatus.REJECTED);
         return serviceOrderRepository.save(order);
     }
 
-    public List<ServiceOrder> getVehicleHistory(Long vehicleId){
+    public List<ServiceOrder> getVehicleHistory(Long vehicleId) {
         vehicleService.getVehicleById(vehicleId);
 
         return serviceOrderRepository.findByVehicleIdOrderByCreatedAtDesc(vehicleId);
     }
 
-    public List<ServiceOrder> getServiceOrdersByPriority(ServiceOrderPriority priority){
+    public List<ServiceOrder> getServiceOrdersByPriority(ServiceOrderPriority priority) {
         return serviceOrderRepository.findByPriority(priority);
     }
 
-    public ServiceOrder updatePriority(Long serviceOrderId, ServiceOrderPriority priority){
+    public ServiceOrder updatePriority(Long serviceOrderId, ServiceOrderPriority priority) {
         ServiceOrder existingOrder = getServiceOrderById(serviceOrderId);
 
         existingOrder.setPriority(priority);
+        return serviceOrderRepository.save(existingOrder);
+    }
+
+    public ServiceOrder updateExpectedCompletionAt(Long serviceOrderId, LocalDateTime expectedCompletionAt) {
+        ServiceOrder existingOrder = serviceOrderRepository.findById(serviceOrderId).orElseThrow(() -> new ServiceOrderNotFoundException(serviceOrderId));
+
+        existingOrder.setExpectedCompletionAt(expectedCompletionAt);
+        return serviceOrderRepository.save(existingOrder);
+    }
+
+    public ServiceOrder updateStatus(Long id, ServiceOrderStatus status) {
+        ServiceOrder existingOrder = getServiceOrderById(id);
+
+        if (existingOrder.getStatus() == ServiceOrderStatus.COMPLETED || existingOrder.getStatus() == ServiceOrderStatus.CANCELLED) {
+            throw new ServiceOrderClosedException(id);
+        }
+
+        if (status == ServiceOrderStatus.IN_PROGRESS && existingOrder.getStartedAt() == null) {
+            existingOrder.setStartedAt(LocalDateTime.now());
+        }
+
+        if (status == ServiceOrderStatus.COMPLETED) {
+            existingOrder.setCompletedAt(LocalDateTime.now());
+        }
+
+        existingOrder.setStatus(status);
         return serviceOrderRepository.save(existingOrder);
     }
 }

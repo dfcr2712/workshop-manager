@@ -101,4 +101,17 @@ public class ServiceOrderController {
     public ServiceOrder updatePriority(@PathVariable Long id, @PathVariable ServiceOrderPriority priority) {
         return serviceOrderService.updatePriority(id, priority);
     }
+
+    @PutMapping("/{id}/expected-completion")
+    public ServiceOrder updateExpectedCompletionAt(
+            @PathVariable Long id,
+            @RequestBody LocalDateTime expectedCompletionAt){
+        return serviceOrderService.updateExpectedCompletionAt(id, expectedCompletionAt);
+    }
+
+    @PutMapping("/{id}/status/{status}")
+    public ServiceOrder updateStatus(@PathVariable Long id,
+                                     @PathVariable ServiceOrderStatus status){
+        return serviceOrderService.updateStatus(id, status);
+    }
 }
