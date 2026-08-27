@@ -114,4 +114,14 @@ public class ServiceOrderController {
                                      @PathVariable ServiceOrderStatus status){
         return serviceOrderService.updateStatus(id, status);
     }
+
+    @PutMapping("/{id}/customer-notes")
+    public ServiceOrder updateCustomerNotes(@PathVariable Long id, @RequestParam String customerNotes){
+        return serviceOrderService.updateCustomerNotes(id, customerNotes);
+    }
+
+    @PutMapping("/{id}/internal-notes")
+    public ServiceOrder updateInternalNotes(@PathVariable Long id, @RequestParam String internalNotes){
+        return serviceOrderService.updateInternalNotes(id, internalNotes);
+    }
 }

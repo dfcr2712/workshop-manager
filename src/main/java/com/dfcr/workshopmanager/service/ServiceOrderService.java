@@ -188,4 +188,16 @@ public class ServiceOrderService {
         existingOrder.setStatus(status);
         return serviceOrderRepository.save(existingOrder);
     }
+
+    public ServiceOrder updateCustomerNotes(Long serviceOrderId, String customerNotes){
+        ServiceOrder existingOrder = getServiceOrderById(serviceOrderId);
+        existingOrder.setCustomerNotes(customerNotes);
+        return serviceOrderRepository.save(existingOrder);
+    }
+
+    public ServiceOrder updateInternalNotes(Long serviceOrderId, String internalNotes){
+        ServiceOrder existingOrder = getServiceOrderById(serviceOrderId);
+        existingOrder.setInternalNotes(internalNotes);
+        return serviceOrderRepository.save(existingOrder);
+    }
 }

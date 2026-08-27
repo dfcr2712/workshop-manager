@@ -60,4 +60,7 @@ public class ServiceOrder {
     private LocalDateTime startedAt;
 
     private LocalDateTime expectedCompletionAt;
+
+    private String customerNotes;
+    private String internalNotes;
 }
