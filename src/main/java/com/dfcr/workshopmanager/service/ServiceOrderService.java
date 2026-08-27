@@ -177,6 +177,8 @@ public class ServiceOrderService {
             throw new ServiceOrderClosedException(id);
         }
 
+        validateStatusTransition(existingOrder.getStatus(), status);
+
         if (status == ServiceOrderStatus.IN_PROGRESS && existingOrder.getStartedAt() == null) {
             existingOrder.setStartedAt(LocalDateTime.now());
         }
@@ -189,15 +191,29 @@ public class ServiceOrderService {
         return serviceOrderRepository.save(existingOrder);
     }
 
-    public ServiceOrder updateCustomerNotes(Long serviceOrderId, String customerNotes){
+    public ServiceOrder updateCustomerNotes(Long serviceOrderId, String customerNotes) {
         ServiceOrder existingOrder = getServiceOrderById(serviceOrderId);
         existingOrder.setCustomerNotes(customerNotes);
         return serviceOrderRepository.save(existingOrder);
     }
 
-    public ServiceOrder updateInternalNotes(Long serviceOrderId, String internalNotes){
+    public ServiceOrder updateInternalNotes(Long serviceOrderId, String internalNotes) {
         ServiceOrder existingOrder = getServiceOrderById(serviceOrderId);
         existingOrder.setInternalNotes(internalNotes);
         return serviceOrderRepository.save(existingOrder);
+    }
+
+    private void validateStatusTransition(ServiceOrderStatus currentStatus, ServiceOrderStatus newStatus) {
+        if (currentStatus == ServiceOrderStatus.OPEN && newStatus != ServiceOrderStatus.IN_PROGRESS && newStatus != ServiceOrderStatus.CANCELLED) {
+            throw new IllegalArgumentException("Invalid status transition from OPEN to COMPLETED.");
+        }
+
+        if (currentStatus == ServiceOrderStatus.IN_PROGRESS && newStatus != ServiceOrderStatus.COMPLETED && newStatus != ServiceOrderStatus.CANCELLED) {
+            throw new IllegalArgumentException("Invalid status transition from " + currentStatus + " to " + newStatus);
+        }
+
+        if (currentStatus == ServiceOrderStatus.COMPLETED || currentStatus == ServiceOrderStatus.CANCELLED) {
+            throw new IllegalArgumentException("Invalid status transition from " + currentStatus + " to " + newStatus);
+        }
     }
 }
