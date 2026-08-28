@@ -65,6 +65,9 @@ public class AppointmentService {
     }
 
     public List<Appointment> getAppointmentsByDateRange(LocalDateTime startDate, LocalDateTime endDate) {
+        if(startDate.isAfter(endDate)){
+            throw new IllegalArgumentException("Start date cannot be after the end date.");
+        }
         return appointmentRepository.findByScheduledAtBetween(startDate, endDate);
     }
 

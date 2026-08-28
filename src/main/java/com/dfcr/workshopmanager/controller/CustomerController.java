@@ -1,6 +1,5 @@
 package com.dfcr.workshopmanager.controller;
 
-import com.dfcr.workshopmanager.repository.CustomerRepository;
 import com.dfcr.workshopmanager.service.CustomerService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
@@ -8,7 +7,6 @@ import com.dfcr.workshopmanager.entity.Customer;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
-
 import java.util.List;
 
 @RestController
@@ -16,11 +14,9 @@ import java.util.List;
 public class CustomerController {
 
     private final CustomerService customerService;
-    private final CustomerRepository customerRepository;
 
-    public CustomerController(CustomerService customerService, CustomerRepository customerRepository) {
+    public CustomerController(CustomerService customerService) {
         this.customerService = customerService;
-        this.customerRepository = customerRepository;
     }
 
     @PostMapping

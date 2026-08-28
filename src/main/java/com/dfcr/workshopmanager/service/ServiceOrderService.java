@@ -79,9 +79,12 @@ public class ServiceOrderService {
         return serviceOrderRepository.findByStatus(status);
     }
 
-    public List<ServiceOrder> findByCreatedAtBetween(LocalDateTime starDate, LocalDateTime endDate) {
-        return serviceOrderRepository.findByCreatedAtBetween(starDate, endDate);
-
+    public List<ServiceOrder> findByCreatedAtBetween(LocalDateTime startDate,
+                                                     LocalDateTime endDate) {
+        if(startDate.isAfter(endDate)){
+            throw new IllegalArgumentException("Start date cannot be after the end date.");
+        }
+        return serviceOrderRepository.findByCreatedAtBetween(startDate, endDate);
     }
 
     public ServiceOrder assignMechanicToServiceOrder(Long orderId, Long mechanicId) {

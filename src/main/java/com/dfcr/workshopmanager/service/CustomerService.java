@@ -1,8 +1,10 @@
 package com.dfcr.workshopmanager.service;
 
 import com.dfcr.workshopmanager.entity.Customer;
+import com.dfcr.workshopmanager.entity.Vehicle;
 import com.dfcr.workshopmanager.exception.CustomerNotFoundException;
 import com.dfcr.workshopmanager.repository.CustomerRepository;
+import com.dfcr.workshopmanager.repository.VehicleRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,9 +13,11 @@ import java.util.List;
 public class CustomerService {
 
     private final CustomerRepository customerRepository;
+    private final VehicleRepository vehicleRepository;
 
-    public CustomerService(CustomerRepository customerRepository) {
+    public CustomerService(CustomerRepository customerRepository, VehicleRepository vehicleRepository) {
         this.customerRepository = customerRepository;
+        this.vehicleRepository = vehicleRepository;
     }
 
     public Customer saveCustomer(Customer customer) {
@@ -25,8 +29,7 @@ public class CustomerService {
     }
 
     public Customer getCustomerById(Long id) {
-        return customerRepository.findById(id)
-                .orElseThrow(() -> new CustomerNotFoundException(id));
+        return customerRepository.findById(id).orElseThrow(() -> new CustomerNotFoundException(id));
     }
 
     public Customer updateCustomer(Long id, Customer updatedCustomer) {
@@ -42,8 +45,13 @@ public class CustomerService {
     }
 
     public void deleteCustomer(long id) {
-        Customer c = getCustomerById(id);
-        customerRepository.delete(c);
+        Customer customer = getCustomerById(id);
+        List<Vehicle> existingVehicles = vehicleRepository.findByCustomerId(id);
+        if (!existingVehicles.isEmpty()) {
+            throw new IllegalArgumentException("Customer with id " + id + " cannot be deleted because it has vehicles.");
+        }
+
+        customerRepository.delete(customer);
     }
 
     public List<Customer> findByName(String name) {

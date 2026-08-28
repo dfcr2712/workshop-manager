@@ -1,8 +1,10 @@
 package com.dfcr.workshopmanager.service;
 
 import com.dfcr.workshopmanager.entity.Customer;
+import com.dfcr.workshopmanager.entity.ServiceOrder;
 import com.dfcr.workshopmanager.entity.Vehicle;
 import com.dfcr.workshopmanager.exception.VehicleNotFoundException;
+import com.dfcr.workshopmanager.repository.ServiceOrderRepository;
 import com.dfcr.workshopmanager.repository.VehicleRepository;
 import org.springframework.stereotype.Service;
 
@@ -13,12 +15,12 @@ public class VehicleService {
 
     private final VehicleRepository vehicleRepository;
     private final CustomerService customerService;
+    private final ServiceOrderRepository serviceOrderRepository;
 
-    public VehicleService(
-            VehicleRepository vehicleRepository,
-            CustomerService customerService) {
+    public VehicleService(VehicleRepository vehicleRepository, CustomerService customerService, ServiceOrderRepository serviceOrderRepository) {
         this.vehicleRepository = vehicleRepository;
         this.customerService = customerService;
+        this.serviceOrderRepository = serviceOrderRepository;
     }
 
     public Vehicle saveVehicle(Vehicle vehicle, Long customerId) {
@@ -30,15 +32,15 @@ public class VehicleService {
         return vehicleRepository.save(vehicle);
     }
 
-    public List<Vehicle> getAllVehicles(){
+    public List<Vehicle> getAllVehicles() {
         return vehicleRepository.findAll();
     }
 
-    public Vehicle getVehicleById(Long id){
+    public Vehicle getVehicleById(Long id) {
         return vehicleRepository.findById(id).orElseThrow(() -> new VehicleNotFoundException(id));
     }
 
-    public Vehicle updateVehicle(Long id, Vehicle updatedVehicle){
+    public Vehicle updateVehicle(Long id, Vehicle updatedVehicle) {
         Vehicle existingVehicle = getVehicleById(id);
 
         existingVehicle.setBrand(updatedVehicle.getBrand());
@@ -50,16 +52,21 @@ public class VehicleService {
         return vehicleRepository.save(existingVehicle);
     }
 
-    public void deleteVehicle(Long id){
-        Vehicle v3 = getVehicleById(id);
-        vehicleRepository.delete(v3);
+    public void deleteVehicle(Long id) {
+        Vehicle vehicle = getVehicleById(id);
+        List<ServiceOrder> existingOrders = serviceOrderRepository.findByVehicleId(id);
+
+        if (!existingOrders.isEmpty()) {
+            throw new IllegalArgumentException("Vehicle with id " + id + " cannot be deleted because it has service orders.");
+        }
+        vehicleRepository.delete(vehicle);
     }
 
-    public List<Vehicle> findByCustomerId(Long id){
+    public List<Vehicle> findByCustomerId(Long id) {
         return vehicleRepository.findByCustomerId(id);
     }
 
-    public Vehicle findByLicensePlate(String licensePlate){
+    public Vehicle findByLicensePlate(String licensePlate) {
         return vehicleRepository.findByLicensePlate(licensePlate).orElseThrow(() -> new VehicleNotFoundException(licensePlate));
     }
 }
