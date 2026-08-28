@@ -16,6 +16,7 @@ public class MechanicService {
     }
 
     public Mechanic createMechanic(Mechanic mechanic) {
+        mechanic.setId(null);
         return mechanicRepository.save(mechanic);
     }
 

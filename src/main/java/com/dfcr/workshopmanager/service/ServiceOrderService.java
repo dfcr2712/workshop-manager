@@ -36,7 +36,7 @@ public class ServiceOrderService {
     }
 
     public ServiceOrder createServiceOrder(ServiceOrder serviceOrder, Long vehicleId) {
-
+        serviceOrder.setId(null);
         Vehicle vehicle = vehicleService.getVehicleById(vehicleId);
         serviceOrder.setVehicle(vehicle);
         serviceOrder.setStatus(ServiceOrderStatus.OPEN);

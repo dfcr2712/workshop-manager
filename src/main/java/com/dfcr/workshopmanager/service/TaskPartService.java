@@ -1,12 +1,11 @@
 package com.dfcr.workshopmanager.service;
 
 import com.dfcr.workshopmanager.entity.Part;
+import com.dfcr.workshopmanager.entity.ServiceOrder;
 import com.dfcr.workshopmanager.entity.Task;
 import com.dfcr.workshopmanager.entity.TaskPart;
-import com.dfcr.workshopmanager.exception.InsufficientStockException;
-import com.dfcr.workshopmanager.exception.PartNotFoundException;
-import com.dfcr.workshopmanager.exception.TaskNotFoundException;
-import com.dfcr.workshopmanager.exception.TaskPartNotFoundException;
+import com.dfcr.workshopmanager.enums.ServiceOrderStatus;
+import com.dfcr.workshopmanager.exception.*;
 import com.dfcr.workshopmanager.repository.PartRepository;
 import com.dfcr.workshopmanager.repository.TaskPartRepository;
 import com.dfcr.workshopmanager.repository.TaskRepository;
@@ -34,10 +33,11 @@ public class TaskPartService {
     @Transactional
     public TaskPart createTaskPart(Long taskId, Long partId, BigDecimal quantity) {
         Task task = taskRepository.findById(taskId).orElseThrow(() -> new TaskNotFoundException(taskId));
+        validateServiceOrderIsEditable(task.getServiceOrder());
         Part part = partRepository.findById(partId).orElseThrow(() -> new PartNotFoundException("Part not found with id " + partId));
 
         if (quantity == null || quantity.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("Quantity must be greather than zero.");
+            throw new IllegalArgumentException("Quantity must be greater than zero.");
         }
         if (part.getStockQuantity().compareTo(quantity) < 0) {
             throw new InsufficientStockException(quantity);
@@ -64,6 +64,7 @@ public class TaskPartService {
     @Transactional
     public void deleteTaskPart(Long taskPartId) {
         TaskPart taskPart = taskPartRepository.findById((taskPartId)).orElseThrow(() -> new TaskPartNotFoundException(taskPartId));
+        validateServiceOrderIsEditable(taskPart.getTask().getServiceOrder());
 
         Part part = taskPart.getPart();
         BigDecimal restoredStock = part.getStockQuantity().add(taskPart.getQuantity());
@@ -91,6 +92,8 @@ public class TaskPartService {
             throw new IllegalArgumentException("Quantity must be greater than zero");
         }
         TaskPart existingTaskPart = getTaskPartById(taskPartid);
+
+        validateServiceOrderIsEditable(existingTaskPart.getTask().getServiceOrder());
 
         BigDecimal oldQuantity = existingTaskPart.getQuantity();
 
@@ -120,5 +123,13 @@ public class TaskPartService {
             total = total.add(newTaskPart.partTotal());
         }
         return total;
+    }
+
+    private void validateServiceOrderIsEditable(ServiceOrder serviceOrder){
+        ServiceOrderStatus status = serviceOrder.getStatus();
+        if(status == ServiceOrderStatus.COMPLETED ||
+        status == ServiceOrderStatus.CANCELLED){
+            throw new ServiceOrderClosedException(serviceOrder.getId());
+        }
     }
 }

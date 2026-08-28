@@ -17,6 +17,7 @@ public class PartService {
     }
 
     public Part createPart(Part part) {
+        part.setId(null);
         return partRepository.save(part);
     }
 

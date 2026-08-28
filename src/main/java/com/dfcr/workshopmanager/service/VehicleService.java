@@ -24,7 +24,7 @@ public class VehicleService {
     }
 
     public Vehicle saveVehicle(Vehicle vehicle, Long customerId) {
-
+        vehicle.setId(null);
         Customer customer = customerService.getCustomerById(customerId);
 
         vehicle.setCustomer(customer);

@@ -2,6 +2,8 @@ package com.dfcr.workshopmanager.service;
 
 import com.dfcr.workshopmanager.entity.ServiceOrder;
 import com.dfcr.workshopmanager.entity.Task;
+import com.dfcr.workshopmanager.enums.ServiceOrderStatus;
+import com.dfcr.workshopmanager.exception.ServiceOrderClosedException;
 import com.dfcr.workshopmanager.exception.TaskNotFoundException;
 import com.dfcr.workshopmanager.repository.TaskRepository;
 import org.springframework.stereotype.Service;
@@ -21,7 +23,9 @@ public class TaskService {
     }
 
     public Task createTask(Long serviceOrderId, Task task){
+        task.setId(null);
         ServiceOrder order = serviceOrderService.getServiceOrderById(serviceOrderId);
+        validateServiceOrderIsEditable(order);
         task.setServiceOrder(order);
         return taskRepository.save(task);
     }
@@ -37,6 +41,7 @@ public class TaskService {
 
     public Task updateTask(Long id, Task updateTask){
         Task existingTask = getTaskById(id);
+        validateServiceOrderIsEditable(existingTask.getServiceOrder());
 
         existingTask.setDescription(updateTask.getDescription());
         existingTask.setLaborHours(updateTask.getLaborHours());
@@ -48,10 +53,19 @@ public class TaskService {
 
     public void deleteTask(Long id){
         Task task = getTaskById(id);
+        validateServiceOrderIsEditable(task.getServiceOrder());
         taskRepository.delete(task);
     }
 
     public List<Task> getAllTasks(){
         return taskRepository.findAll();
+    }
+
+    private void validateServiceOrderIsEditable(ServiceOrder serviceOrder){
+        ServiceOrderStatus status = serviceOrder.getStatus();
+        if(status == ServiceOrderStatus.COMPLETED ||
+        status == ServiceOrderStatus.CANCELLED){
+            throw new ServiceOrderClosedException(serviceOrder.getId());
+        }
     }
 }
