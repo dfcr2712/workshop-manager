@@ -57,9 +57,7 @@ public class ServiceOrderService {
 
     public ServiceOrder updateServiceOrder(Long id, ServiceOrder updatedServiceOrder) {
         ServiceOrder existingServiceOrder = getServiceOrderById(id);
-        if (existingServiceOrder.getStatus() == ServiceOrderStatus.COMPLETED || existingServiceOrder.getStatus() == ServiceOrderStatus.CANCELLED) {
-            throw new ServiceOrderClosedException(id);
-        }
+        validateServiceOrderIsEditable(existingServiceOrder);
 
         existingServiceOrder.setDescription(updatedServiceOrder.getDescription());
         return serviceOrderRepository.save(existingServiceOrder);
@@ -67,6 +65,11 @@ public class ServiceOrderService {
 
     public void deleteServiceOrder(Long id) {
         ServiceOrder serviceOrder = getServiceOrderById(id);
+        List<Task> tasks = taskRepository.findByServiceOrderId(id);
+        if(!tasks.isEmpty()){
+            throw new IllegalArgumentException("Service Order with id " + id + " cannot be deleted because it already has tasks.");
+        }
+
         serviceOrderRepository.delete(serviceOrder);
     }
 
@@ -89,6 +92,8 @@ public class ServiceOrderService {
 
     public ServiceOrder assignMechanicToServiceOrder(Long orderId, Long mechanicId) {
         ServiceOrder order = getServiceOrderById(orderId);
+        validateServiceOrderIsEditable(order);
+
         Mechanic mechanic = mechanicService.getMechanicById(mechanicId);
         if(!mechanic.isActive()){
             throw new IllegalArgumentException("Inactive mechanic cannot be assigned to a service order.");
@@ -139,6 +144,7 @@ public class ServiceOrderService {
 
     public ServiceOrder approveEstimate(Long serviceOrderId) {
         ServiceOrder order = serviceOrderRepository.findById(serviceOrderId).orElseThrow(() -> new ServiceOrderNotFoundException(serviceOrderId));
+        validateServiceOrderIsEditable(order);
 
         order.setEstimateStatus(EstimateStatus.APPROVED);
         return serviceOrderRepository.save(order);
@@ -146,6 +152,7 @@ public class ServiceOrderService {
 
     public ServiceOrder rejectEstimate(Long serviceOrderId) {
         ServiceOrder order = serviceOrderRepository.findById(serviceOrderId).orElseThrow(() -> new ServiceOrderNotFoundException(serviceOrderId));
+        validateServiceOrderIsEditable(order);
 
         order.setEstimateStatus(EstimateStatus.REJECTED);
         return serviceOrderRepository.save(order);
@@ -163,6 +170,7 @@ public class ServiceOrderService {
 
     public ServiceOrder updatePriority(Long serviceOrderId, ServiceOrderPriority priority) {
         ServiceOrder existingOrder = getServiceOrderById(serviceOrderId);
+        validateServiceOrderIsEditable(existingOrder);
 
         existingOrder.setPriority(priority);
         return serviceOrderRepository.save(existingOrder);
@@ -170,6 +178,7 @@ public class ServiceOrderService {
 
     public ServiceOrder updateExpectedCompletionAt(Long serviceOrderId, LocalDateTime expectedCompletionAt) {
         ServiceOrder existingOrder = serviceOrderRepository.findById(serviceOrderId).orElseThrow(() -> new ServiceOrderNotFoundException(serviceOrderId));
+        validateServiceOrderIsEditable(existingOrder);
 
         existingOrder.setExpectedCompletionAt(expectedCompletionAt);
         return serviceOrderRepository.save(existingOrder);
@@ -178,9 +187,7 @@ public class ServiceOrderService {
     public ServiceOrder updateStatus(Long id, ServiceOrderStatus status) {
         ServiceOrder existingOrder = getServiceOrderById(id);
 
-        if (existingOrder.getStatus() == ServiceOrderStatus.COMPLETED || existingOrder.getStatus() == ServiceOrderStatus.CANCELLED) {
-            throw new ServiceOrderClosedException(id);
-        }
+        validateServiceOrderIsEditable(existingOrder);
 
         validateStatusTransition(existingOrder.getStatus(), status);
 
@@ -228,6 +235,13 @@ public class ServiceOrderService {
 
         if (tasks.isEmpty()) {
             throw new IllegalArgumentException("Service order with id " + serviceOrderId + " dont have tasks.");
+        }
+    }
+
+    private void validateServiceOrderIsEditable(ServiceOrder serviceOrder){
+        ServiceOrderStatus status = serviceOrder.getStatus();
+        if(status == ServiceOrderStatus.COMPLETED || status == ServiceOrderStatus.CANCELLED){
+            throw new ServiceOrderClosedException(serviceOrder.getId());
         }
     }
 }

@@ -1,8 +1,10 @@
 package com.dfcr.workshopmanager.service;
 
 import com.dfcr.workshopmanager.entity.Part;
+import com.dfcr.workshopmanager.entity.TaskPart;
 import com.dfcr.workshopmanager.exception.PartNotFoundException;
 import com.dfcr.workshopmanager.repository.PartRepository;
+import com.dfcr.workshopmanager.repository.TaskPartRepository;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -11,9 +13,11 @@ import java.util.List;
 @Service
 public class PartService {
     private final PartRepository partRepository;
+    private final TaskPartRepository taskPartRepository;
 
-    public PartService(PartRepository partRepository) {
+    public PartService(PartRepository partRepository, TaskPartRepository taskPartRepository) {
         this.partRepository = partRepository;
+        this.taskPartRepository = taskPartRepository;
     }
 
     public Part createPart(Part part) {
@@ -44,6 +48,10 @@ public class PartService {
 
     public void deletePart(Long partId) {
         Part part = getPartById(partId);
+        List<TaskPart> taskParts = taskPartRepository.findByPartId(partId);
+        if(!taskParts.isEmpty()){
+            throw new IllegalArgumentException("Part with id " + partId + " cannot be deleted because it is already used in a task.");
+        }
         partRepository.delete(part);
     }
 

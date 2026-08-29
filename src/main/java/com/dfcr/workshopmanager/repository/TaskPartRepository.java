@@ -9,4 +9,5 @@ import java.util.List;
 public interface TaskPartRepository extends JpaRepository<TaskPart, Long> {
 
     List<TaskPart> findByTaskId(Long taskId);
+    List<TaskPart> findByPartId(Long partId);
 }

@@ -2,9 +2,11 @@ package com.dfcr.workshopmanager.service;
 
 import com.dfcr.workshopmanager.entity.ServiceOrder;
 import com.dfcr.workshopmanager.entity.Task;
+import com.dfcr.workshopmanager.entity.TaskPart;
 import com.dfcr.workshopmanager.enums.ServiceOrderStatus;
 import com.dfcr.workshopmanager.exception.ServiceOrderClosedException;
 import com.dfcr.workshopmanager.exception.TaskNotFoundException;
+import com.dfcr.workshopmanager.repository.TaskPartRepository;
 import com.dfcr.workshopmanager.repository.TaskRepository;
 import org.springframework.stereotype.Service;
 
@@ -15,11 +17,13 @@ public class TaskService {
 
     private final TaskRepository taskRepository;
     private final ServiceOrderService serviceOrderService;
+    private final TaskPartRepository taskPartRepository;
 
 
-    public TaskService(TaskRepository taskRepository, ServiceOrderService serviceOrderService) {
+    public TaskService(TaskRepository taskRepository, ServiceOrderService serviceOrderService, TaskPartRepository taskPartRepository) {
         this.taskRepository = taskRepository;
         this.serviceOrderService = serviceOrderService;
+        this.taskPartRepository = taskPartRepository;
     }
 
     public Task createTask(Long serviceOrderId, Task task){
@@ -54,6 +58,11 @@ public class TaskService {
     public void deleteTask(Long id){
         Task task = getTaskById(id);
         validateServiceOrderIsEditable(task.getServiceOrder());
+
+        List<TaskPart> taskParts = taskPartRepository.findByTaskId(id);
+        if(!taskParts.isEmpty()){
+            throw new IllegalArgumentException("Task with id " + id + " cannot be deleted because it already has parts.");
+        }
         taskRepository.delete(task);
     }
 

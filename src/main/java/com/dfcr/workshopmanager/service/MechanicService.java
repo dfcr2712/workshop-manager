@@ -1,8 +1,10 @@
 package com.dfcr.workshopmanager.service;
 
 import com.dfcr.workshopmanager.entity.Mechanic;
+import com.dfcr.workshopmanager.entity.ServiceOrder;
 import com.dfcr.workshopmanager.exception.MechanicNotFoundException;
 import com.dfcr.workshopmanager.repository.MechanicRepository;
+import com.dfcr.workshopmanager.repository.ServiceOrderRepository;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -10,9 +12,11 @@ import java.util.List;
 public class MechanicService {
 
     private final MechanicRepository mechanicRepository;
+    private final ServiceOrderRepository serviceOrderRepository;
 
-    public MechanicService(MechanicRepository mechanicRepository) {
+    public MechanicService(MechanicRepository mechanicRepository, ServiceOrderRepository serviceOrderRepository) {
         this.mechanicRepository = mechanicRepository;
+        this.serviceOrderRepository = serviceOrderRepository;
     }
 
     public Mechanic createMechanic(Mechanic mechanic) {
@@ -41,7 +45,13 @@ public class MechanicService {
     }
 
     public void deleteMechanic(Long id) {
-        mechanicRepository.delete(getMechanicById(id));
+        Mechanic existingMechanic = getMechanicById(id);
+
+        List<ServiceOrder> serviceOrders = serviceOrderRepository.findByMechanicId(id);
+        if(!serviceOrders.isEmpty()){
+            throw new IllegalArgumentException("Mechanic with id " + id + " cannot be deleted because it is already used in a service order.");
+        }
+        mechanicRepository.delete(existingMechanic);
     }
 
     public List<Mechanic> getMechanicByName(String name) {

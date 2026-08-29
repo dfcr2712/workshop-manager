@@ -1,9 +1,11 @@
 package com.dfcr.workshopmanager.service;
 
+import com.dfcr.workshopmanager.entity.Appointment;
 import com.dfcr.workshopmanager.entity.Customer;
 import com.dfcr.workshopmanager.entity.ServiceOrder;
 import com.dfcr.workshopmanager.entity.Vehicle;
 import com.dfcr.workshopmanager.exception.VehicleNotFoundException;
+import com.dfcr.workshopmanager.repository.AppointmentRepository;
 import com.dfcr.workshopmanager.repository.ServiceOrderRepository;
 import com.dfcr.workshopmanager.repository.VehicleRepository;
 import org.springframework.stereotype.Service;
@@ -16,11 +18,13 @@ public class VehicleService {
     private final VehicleRepository vehicleRepository;
     private final CustomerService customerService;
     private final ServiceOrderRepository serviceOrderRepository;
+    private final AppointmentRepository appointmentRepository;
 
-    public VehicleService(VehicleRepository vehicleRepository, CustomerService customerService, ServiceOrderRepository serviceOrderRepository) {
+    public VehicleService(VehicleRepository vehicleRepository, CustomerService customerService, ServiceOrderRepository serviceOrderRepository, AppointmentRepository appointmentRepository) {
         this.vehicleRepository = vehicleRepository;
         this.customerService = customerService;
         this.serviceOrderRepository = serviceOrderRepository;
+        this.appointmentRepository = appointmentRepository;
     }
 
     public Vehicle saveVehicle(Vehicle vehicle, Long customerId) {
@@ -55,9 +59,10 @@ public class VehicleService {
     public void deleteVehicle(Long id) {
         Vehicle vehicle = getVehicleById(id);
         List<ServiceOrder> existingOrders = serviceOrderRepository.findByVehicleId(id);
+        List<Appointment> appointments = appointmentRepository.findByVehicleId(id);
 
-        if (!existingOrders.isEmpty()) {
-            throw new IllegalArgumentException("Vehicle with id " + id + " cannot be deleted because it has service orders.");
+        if (!existingOrders.isEmpty() || !appointments.isEmpty()) {
+            throw new IllegalArgumentException("Vehicle with id " + id + " cannot be deleted because it has associated records.");
         }
         vehicleRepository.delete(vehicle);
     }
