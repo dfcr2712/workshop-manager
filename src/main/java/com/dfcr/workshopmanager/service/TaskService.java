@@ -50,7 +50,6 @@ public class TaskService {
         existingTask.setDescription(updateTask.getDescription());
         existingTask.setLaborHours(updateTask.getLaborHours());
         existingTask.setHourlyRate(updateTask.getHourlyRate());
-        existingTask.setMaterialCost(updateTask.getMaterialCost());
 
         return taskRepository.save(existingTask);
     }

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.concurrent.ThreadPoolExecutor;
 
 @Service
 public class AppointmentService {
@@ -65,21 +66,29 @@ public class AppointmentService {
     }
 
     public List<Appointment> getAppointmentsByDateRange(LocalDateTime startDate, LocalDateTime endDate) {
-        if(startDate.isAfter(endDate)){
+        if (startDate.isAfter(endDate)) {
             throw new IllegalArgumentException("Start date cannot be after the end date.");
         }
         return appointmentRepository.findByScheduledAtBetween(startDate, endDate);
     }
 
-    public Appointment cancelAppointment(Long appointmentId) {
+    public Appointment confirmAppointment(Long appointmentId){
         Appointment appointment = getAppointmentById(appointmentId);
+        validateStatusTransition(appointment.getStatus(), AppointmentStatus.CONFIRMED);
+        appointment.setStatus(AppointmentStatus.CONFIRMED);
+        return appointmentRepository.save(appointment);
+    }
 
-        appointment.setStatus(AppointmentStatus.CANCELLED);
+    public Appointment completeAppointment(Long appointmentId){
+        Appointment appointment = getAppointmentById(appointmentId);
+        validateStatusTransition(appointment.getStatus(), AppointmentStatus.COMPLETED);
+        appointment.setStatus(AppointmentStatus.COMPLETED);
         return appointmentRepository.save(appointment);
     }
 
     public Appointment updateAppointment(Long appointmentId, Appointment appointment) {
         Appointment oldAppointment = getAppointmentById(appointmentId);
+        validateAppointmentIsEditable(oldAppointment);
 
         oldAppointment.setNotes(appointment.getNotes());
         oldAppointment.setReason(appointment.getReason());
@@ -88,8 +97,44 @@ public class AppointmentService {
         return appointmentRepository.save(oldAppointment);
     }
 
-    public void deleteAppointment(Long appointmentId) {
-        appointmentRepository.delete(getAppointmentById(appointmentId));
+    public Appointment cancelAppointment(Long appointmentId) {
+        Appointment appointment = getAppointmentById(appointmentId);
+        validateStatusTransition(appointment.getStatus(), AppointmentStatus.CANCELLED);
+
+        appointment.setStatus(AppointmentStatus.CANCELLED);
+        return appointmentRepository.save(appointment);
     }
 
+    public void deleteAppointment(Long appointmentId) {
+        Appointment appointment = getAppointmentById(appointmentId);
+        if(appointment.getStatus() != AppointmentStatus.CANCELLED){
+            throw new IllegalArgumentException("Only cancelled appointments can be deleted.");
+        }
+        appointmentRepository.delete(appointment);
+    }
+
+    private void validateStatusTransition(AppointmentStatus currentStatus, AppointmentStatus newStatus) {
+        if (currentStatus == AppointmentStatus.SCHEDULED && (newStatus == AppointmentStatus.SCHEDULED ||
+                 newStatus == AppointmentStatus.COMPLETED)) {
+            throw new IllegalArgumentException("Appointment scheduled cannot be completed without confirmation.");
+        }
+        if (currentStatus == AppointmentStatus.CONFIRMED && (newStatus == AppointmentStatus.CONFIRMED ||
+                newStatus == AppointmentStatus.SCHEDULED)) {
+            throw new IllegalArgumentException("Appointment confirmed cannot be scheduled again.");
+        }
+        if (currentStatus == AppointmentStatus.COMPLETED) {
+            throw new IllegalArgumentException("Cannot change the status after being completed.");
+        }
+        if (currentStatus == AppointmentStatus.CANCELLED) {
+            throw new IllegalArgumentException("Cannot change the status after being cancelled.");
+        }
+    }
+
+    private void validateAppointmentIsEditable(Appointment appointment){
+        if(appointment.getStatus() == AppointmentStatus.COMPLETED ||
+        appointment.getStatus() == AppointmentStatus.CANCELLED){
+            throw new IllegalArgumentException("Completed or cancelled appointments cannot be edited."
+            );
+        }
+    }
 }

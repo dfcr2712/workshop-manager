@@ -7,7 +7,6 @@ import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import java.math.BigDecimal;
 
 @Entity
@@ -32,19 +31,12 @@ public class Task {
     @PositiveOrZero
     private BigDecimal hourlyRate;
 
-    @PositiveOrZero
-    private BigDecimal materialCost;
-
     @ManyToOne
     @JoinColumn(name = "service_order_id", nullable = false)
     private ServiceOrder serviceOrder;
 
     public BigDecimal laborCost(){
         return laborHours.multiply(hourlyRate);
-    }
-
-    public BigDecimal taskTotal(){
-        return laborCost().add(materialCost);
     }
 
 }

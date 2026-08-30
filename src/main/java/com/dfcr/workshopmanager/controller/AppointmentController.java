@@ -76,6 +76,16 @@ public class AppointmentController {
         appointmentService.deleteAppointment(id);
     }
 
+    @PutMapping("/{id}/confirm")
+    public Appointment confirmAppointment(@PathVariable Long id) {
+        return appointmentService.confirmAppointment(id);
+    }
+
+    @PutMapping("/{id}/complete")
+    public Appointment completeAppointment(@PathVariable Long id) {
+        return appointmentService.completeAppointment(id);
+    }
+
 
 
 }
