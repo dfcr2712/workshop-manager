@@ -1,8 +1,8 @@
 package com.dfcr.workshopmanager.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -28,10 +28,12 @@ public class TaskPart {
     @JoinColumn(name = "part_id", nullable = false)
     private Part part;
 
+    @NotNull
     @Positive
     @Column(nullable = false)
     private BigDecimal quantity;
 
+    @NotNull
     @Positive
     @Column(nullable = false)
     private BigDecimal unitPrice;

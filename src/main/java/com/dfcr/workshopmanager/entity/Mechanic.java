@@ -22,7 +22,7 @@ public class Mechanic {
     private Long id;
 
     @NotBlank
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String name;
 
     @NotBlank
@@ -30,6 +30,7 @@ public class Mechanic {
     @Column(nullable = false, unique = true)
     private String email;
 
+    @NotBlank
     @Pattern(regexp = "(\\+351)?\\d{9}")
     @Column(nullable = false)
     private String phoneNumber;
@@ -40,4 +41,4 @@ public class Mechanic {
 
     private boolean active;
 
-    }
+}

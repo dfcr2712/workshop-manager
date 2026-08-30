@@ -60,7 +60,6 @@ public class PartService {
 
         existingPart.setName(updatePart.getName());
         existingPart.setReference(updatePart.getReference());
-        existingPart.setStockQuantity(updatePart.getStockQuantity());
         existingPart.setUnitPrice(updatePart.getUnitPrice());
         existingPart.setActive(updatePart.isActive());
         existingPart.setMinimumStock(updatePart.getMinimumStock());

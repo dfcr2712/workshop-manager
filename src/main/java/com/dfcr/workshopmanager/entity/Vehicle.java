@@ -37,7 +37,7 @@ public class Vehicle {
 
     @NotBlank
     @Size(min = 17, max = 17)
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String vin;
 
     @ManyToOne

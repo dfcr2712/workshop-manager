@@ -34,6 +34,7 @@ public class Customer {
     @Column(nullable = false, unique = true)
     private String nif;
 
+    @NotBlank
     @Pattern(regexp = "(\\+351)?\\d{9}")
     @Column(nullable = false)
     private String phoneNumber;

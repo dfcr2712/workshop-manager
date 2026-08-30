@@ -47,6 +47,7 @@ public class ServiceOrder {
     private Mechanic mechanic;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private EstimateStatus estimateStatus;
 
     @NotNull
@@ -55,6 +56,7 @@ public class ServiceOrder {
     private Long mileage;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private ServiceOrderPriority priority;
 
     private LocalDateTime startedAt;
