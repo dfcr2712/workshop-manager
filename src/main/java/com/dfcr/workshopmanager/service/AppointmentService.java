@@ -38,6 +38,10 @@ public class AppointmentService {
             throw new IllegalArgumentException("Vehicle doesn't belong to this customer.");
         }
 
+        if(appointment.getScheduledAt().isBefore(LocalDateTime.now())){
+            throw new IllegalArgumentException("Scheduled date cannot be before now.");
+        }
+
         appointment.setStatus(AppointmentStatus.SCHEDULED);
         appointment.setCustomer(customer);
         appointment.setVehicle(vehicle);
@@ -89,6 +93,9 @@ public class AppointmentService {
     public Appointment updateAppointment(Long appointmentId, Appointment appointment) {
         Appointment oldAppointment = getAppointmentById(appointmentId);
         validateAppointmentIsEditable(oldAppointment);
+        if(appointment.getScheduledAt().isBefore(LocalDateTime.now())){
+            throw new IllegalArgumentException("Scheduled date cannot be before now.");
+        }
 
         oldAppointment.setNotes(appointment.getNotes());
         oldAppointment.setReason(appointment.getReason());
