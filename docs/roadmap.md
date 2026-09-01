@@ -1,29 +1,51 @@
 # Roadmap
 
-## v0.1
-- Planeamento
-- Documentação
+## v1.0.0 — REST API Backend ✅
 
-## v0.2
-- Aplicação Java (POO)
+* Spring Boot REST API
+* MySQL database persistence
+* Customer management
+* Vehicle management and service history
+* Mechanic management
+* Service order lifecycle management
+* Workshop task management
+* Parts and stock management
+* Labor and parts cost calculation
+* Estimate approval and rejection
+* Service order priorities and lifecycle dates
+* Appointment management
+* Business rule validation
+* Global exception handling
+* End-to-end API testing with Postman
 
-## v0.3
-- Persistência de dados
+## v2.0.0 — Web Frontend
 
-## v1.0
-- Aplicação Desktop funcional
+Build a web interface for the Workshop Manager using the fundamentals of web development.
 
-## v2.0
-- Base de Dados
+Planned topics and features:
 
-## v3.0
-- API REST (Spring Boot)
+* Semantic HTML structure
+* Forms for creating and editing data
+* CSS layouts and responsive design
+* JavaScript fundamentals
+* DOM manipulation
+* Event handling
+* JSON processing
+* Communication with the REST API using `fetch()`
+* Dynamic rendering of backend data without full page reloads
+* Customer, vehicle, service order and appointment interfaces
 
-## v4.0
-- Interface Web (React)
+The first frontend version will use HTML, CSS and vanilla JavaScript without a frontend framework.
 
-## v5.0
-- Docker
+## Future Improvements
 
-## v6.0
-- Deploy
+Possible improvements after the initial web frontend:
+
+* Automated backend tests
+* Swagger / OpenAPI documentation
+* Authentication and authorization
+* Improved frontend validation and user experience
+* Reporting and invoicing
+* Docker support
+* Application deployment
+* Evaluation of a frontend framework if justified by the project
