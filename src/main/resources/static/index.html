@@ -29,20 +29,43 @@
     <section id="customers">
         <h2>Customers</h2>
         <p>Manage workshop customers here.</p>
+
         <form>
+            <fieldset>
 
-            <label for="name">Name</label>
-            <input id="name" name="name" type="text" required>
+                <legend>Customer Information</legend>
+                <label for="name">Name</label>
+                <input
+                        id="name"
+                        placeholder="John Smith"
+                        name="name"
+                        type="text"
+                        autocomplete="name"
+                        required>
 
-            <label for="email">Email</label>
-            <input id="email" name="email" type="email" required>
+                <label for="email">Email</label>
+                <input
+                        id="email"
+                        placeholder="johnsmith@email.com"
+                        name="email"
+                        type="email"
+                        autocomplete="email"
+                        required>
 
-            <label for="phone">Phone</label>
-            <input id="phone" name="phone" type="tel" required>
+                <label for="phone">Phone</label>
+                <input
+                        id="phone"
+                        placeholder="+351 917642567"
+                        name="phone"
+                        type="tel"
+                        autocomplete="tel"
+                        required>
+
+            </fieldset>
 
             <button type="submit">Create Customer</button>
-
         </form>
+
     </section>
 
     <section id="vehicles">
@@ -53,6 +76,18 @@
     <section id="service-orders">
         <h2>Service Orders</h2>
         <p>Manage workshop service orders here.</p>
+
+        <form>
+            <label for="customer-notes">Customer Notes</label>
+            <textarea id="customer-notes"
+                      name="customerNotes"
+                      placeholder="Customer requires to check brake sound."
+                      rows="4"
+                      cols="40"></textarea>
+
+            <button type="submit">Create Service Order</button>
+
+        </form>
     </section>
 </main>
 
