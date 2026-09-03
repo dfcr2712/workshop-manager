@@ -78,12 +78,29 @@
         <p>Manage workshop service orders here.</p>
 
         <form>
+            <label for="priority">Priority</label>
+            <select id="priority" name="priority" required>
+                <option value="" selected disabled>Select priority</option>
+                <option value="LOW">Low</option>
+                <option value="NORMAL">Normal</option>
+                <option value="HIGH">High</option>
+            </select>
+
             <label for="customer-notes">Customer Notes</label>
             <textarea id="customer-notes"
                       name="customerNotes"
                       placeholder="Customer requires to check brake sound."
                       rows="4"
                       cols="40"></textarea>
+
+            <fieldset>
+                <legend>Estimate Decision</legend>
+                <input type="radio" name="estimate-status" id="approved" value="APPROVED">
+                <label for="approved">Approved</label>
+
+                <input type="radio" name="estimate-status" id="rejected" value="REJECTED">
+                <label for="rejected">Rejected</label>
+            </fieldset>
 
             <button type="submit">Create Service Order</button>
 
