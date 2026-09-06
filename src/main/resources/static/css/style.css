@@ -1,0 +1,22 @@
+h1{
+    color: red;
+}
+
+h2{
+    color: blue;
+}
+
+#customers{
+background-color: lightgray;
+padding: 20px;
+border: 1px solid black;
+margin: 20px;
+}
+
+.action-button{
+color: purple;
+}
+
+body{
+font-family: Arial;
+}
