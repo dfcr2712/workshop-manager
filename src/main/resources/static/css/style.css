@@ -140,6 +140,11 @@ label {
     cursor: pointer;
 }
 
+.action-buttons {
+    display: flex;
+    gap: 8px;
+}
+
 .edit-button {
     background-color: green;
     color: white;
@@ -165,7 +170,7 @@ label {
 /* mobile */
 @media (max-width: 600px) {
     main,
-    header{
+    header {
         padding: 0 12px;
     }
 
@@ -183,8 +188,11 @@ label {
         margin-bottom: 6px;
     }
 
+    .action-buttons {
+        flex-direction: column;
+    }
+
     .primary-button {
         width: 100%;
     }
 }
-

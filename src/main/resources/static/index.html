@@ -29,6 +29,7 @@
 <main>
     <section id="customers" class="section-card">
         <h2>Customers</h2>
+
         <p>Manage workshop customers here.</p>
 
         <form>
@@ -73,6 +74,7 @@
         <div class="table-wrapper">
             <table class="customer-table">
                 <caption>Customer List</caption>
+
                 <thead>
                 <tr>
                     <th scope="col">Name</th>
@@ -81,17 +83,30 @@
                     <th scope="col">Actions</th>
                 </tr>
                 </thead>
+
                 <tbody>
                 <tr>
                     <td>John Smith</td>
                     <td>john@email.com</td>
                     <td>912345678</td>
                     <td>
-                        <button type="button" class="action-button edit-button" data-customer-id="1">Edit</button>
-                        <button type="button" class="action-button delete-button" data-customer-id="1">Delete</button>
+                        <div class="action-buttons">
+                            <button type="button"
+                                    class="action-button
+                                    edit-button"
+                                    data-customer-id="1">
+                                Edit
+                            </button>
+                            <button type="button"
+                                    class="action-button delete-button"
+                                    data-customer-id="1">
+                                Delete
+                            </button>
+                        </div>
                     </td>
                 </tr>
                 </tbody>
+
             </table>
         </div>
     </section>
