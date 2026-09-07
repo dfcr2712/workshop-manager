@@ -51,7 +51,7 @@ nav a {
 nav a:hover {
     color: blue;
     font-weight: bold;
-    background-color: lightgray;
+    background-color: lightblue;
 }
 
 .section-card {
@@ -97,7 +97,7 @@ nav a:hover {
     margin-bottom: 12px;
 }
 
-.form-group{
+.form-group {
     margin-bottom: 12px;
 }
 
@@ -157,3 +157,34 @@ label {
 .delete-button:hover {
     background-color: darkred;
 }
+
+.table-wrapper {
+    overflow-x: auto;
+}
+
+/* mobile */
+@media (max-width: 600px) {
+    main,
+    header{
+        padding: 0 12px;
+    }
+
+    nav ul {
+        flex-direction: column;
+    }
+
+    .section-card {
+        padding: 12px;
+        margin: 12px 0;
+    }
+
+    .action-button {
+        width: 100%;
+        margin-bottom: 6px;
+    }
+
+    .primary-button {
+        width: 100%;
+    }
+}
+
