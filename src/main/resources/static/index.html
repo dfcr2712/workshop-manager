@@ -27,7 +27,7 @@
 </header>
 
 <main>
-    <section id="customers">
+    <section id="customers" class="section-card">
         <h2>Customers</h2>
         <p>Manage workshop customers here.</p>
 
@@ -38,6 +38,7 @@
                 <label for="name">Name</label>
                 <input
                         id="name"
+                        class="form-control"
                         placeholder="John Smith"
                         name="name"
                         type="text"
@@ -47,6 +48,7 @@
                 <label for="email">Email</label>
                 <input
                         id="email"
+                        class="form-control"
                         placeholder="johnsmith@email.com"
                         name="email"
                         type="email"
@@ -56,6 +58,7 @@
                 <label for="phone">Phone</label>
                 <input
                         id="phone"
+                        class="form-control"
                         placeholder="+351 917642567"
                         name="phone"
                         type="tel"
@@ -64,7 +67,7 @@
 
             </fieldset>
 
-            <button type="submit">Create Customer</button>
+            <button type="submit" class="primary-button">Create Customer</button>
         </form>
 
         <table class="customer-table">
@@ -83,8 +86,8 @@
                 <td>john@email.com</td>
                 <td>912345678</td>
                 <td>
-                    <button type="button" class="action-button" data-customer-id="1">Edit</button>
-                    <button type="button" class="action-button" data-customer-id="1">Delete</button>
+                    <button type="button" class="action-button edit-button" data-customer-id="1">Edit</button>
+                    <button type="button" class="action-button delete-button" data-customer-id="1">Delete</button>
                 </td>
             </tr>
             </tbody>
@@ -92,18 +95,18 @@
 
     </section>
 
-    <section id="vehicles">
+    <section id="vehicles" class="section-card">
         <h2>Vehicles</h2>
         <p>Manage workshop vehicles here.</p>
     </section>
 
-    <section id="service-orders">
+    <section id="service-orders" class="section-card">
         <h2>Service Orders</h2>
         <p>Manage workshop service orders here.</p>
 
         <form>
             <label for="priority">Priority</label>
-            <select id="priority" name="priority" required>
+            <select id="priority" class="form-control" name="priority" required>
                 <option value="" selected disabled>Select priority</option>
                 <option value="LOW">Low</option>
                 <option value="NORMAL">Normal</option>
@@ -112,12 +115,13 @@
 
             <label for="customer-notes">Customer Notes</label>
             <textarea id="customer-notes"
+                      class="form-control"
                       name="customerNotes"
                       placeholder="Customer requires to check brake sound."
                       rows="4"
                       cols="40"></textarea>
 
-            <fieldset>
+            <fieldset class="radio-group">
                 <legend>Estimate Decision</legend>
                 <input type="radio" name="estimate-status" id="approved" value="APPROVED">
                 <label for="approved">Approved</label>
@@ -126,7 +130,7 @@
                 <label for="rejected">Rejected</label>
             </fieldset>
 
-            <button type="submit">Create Service Order</button>
+            <button type="submit" class="primary-button">Create Service Order</button>
 
         </form>
     </section>
