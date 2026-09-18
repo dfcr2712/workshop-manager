@@ -86,6 +86,24 @@ async function createCustomer(customerData){
     return createdCustomer;
 }
 
+async function updateCustomer(customerId, customerData) {
+    const response = await fetch(`/customers/${customerId}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(customerData)
+    });
+
+    if (!response.ok) {
+        throw new Error(`Error updating customer: ${response.status}`);
+    }
+
+    const updatedCustomer = await response.json();
+
+    return updatedCustomer;
+}
+
 customerTable.addEventListener("click", (event) => {
     const editButton = event.target.closest(".edit-button");
     const deleteButton = event.target.closest(".delete-button");
@@ -98,6 +116,7 @@ customerTable.addEventListener("click", (event) => {
         console.log("Edit: ", customerId);
 
         editingRow = editButton.closest("tr");
+
         const cells = editingRow.querySelectorAll("td");
 
         nameInput.value = cells[0].textContent;
@@ -126,27 +145,30 @@ customerForm.addEventListener("submit", async (event) => {
     const phone = phoneInput.value;
     const nif = nifInput.value;
 
-    if (editingCustomerId !== null) {
-        const cells = editingRow.querySelectorAll("td");
-        cells[0].textContent = name;
-        cells[1].textContent = nif;
-        cells[2].textContent = email;
-        cells[3].textContent = phone;
-
-        editingCustomerId = null;
-        editingRow = null;
-
-        customerForm.reset();
-
-        return;
-    }
-
     const customerData = {
         name,
         nif,
         phoneNumber: phone,
         email
     };
+
+    if (editingCustomerId !== null) {
+
+        const updatedCustomer = await  updateCustomer(editingCustomerId, customerData);
+        const cells = editingRow.querySelectorAll("td");
+
+        cells[0].textContent = updatedCustomer.name;
+        cells[1].textContent = updatedCustomer.nif;
+        cells[2].textContent = updatedCustomer.email;
+        cells[3].textContent = updatedCustomer.phoneNumber;
+
+        editingCustomerId = null;
+        editingRow = null;
+        customerForm.reset();
+
+        return;
+    }
+
 
     const createdCustomer = await createCustomer(customerData);
 
