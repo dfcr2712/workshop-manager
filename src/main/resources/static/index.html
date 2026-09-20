@@ -64,6 +64,8 @@
                         placeholder="+351917642567"
                         name="phone"
                         type="tel"
+                        pattern="(\+351)?\d{9}"
+                        title="Enter 9 digits, optionally preceded by +351."
                         autocomplete="tel"
                         required>
 
@@ -75,6 +77,14 @@
                         name="nif"
                         required
                         placeholder="123456789">
+
+                <label for="address">Address</label>
+                <input
+                        id="address"
+                        class="form-control"
+                        name="address"
+                        type="text"
+                        autocomplete="street-address">
 
             </fieldset>
 
@@ -91,6 +101,7 @@
                     <th scope="col">NIF</th>
                     <th scope="col">Email</th>
                     <th scope="col">Phone</th>
+                    <th scope="col">Address</th>
                     <th scope="col">Actions</th>
                 </tr>
                 </thead>

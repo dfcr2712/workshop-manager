@@ -2,6 +2,7 @@
 
 let editingCustomerId = null;
 let editingRow = null;
+let customerRequestInProgress = false;
 
 const customerTable = document.querySelector(".customer-table");
 const customerForm = document.querySelector("#customer-form");
@@ -9,6 +10,8 @@ const nameInput = document.querySelector("#name");
 const emailInput = document.querySelector("#email");
 const phoneInput = document.querySelector("#phone");
 const nifInput = document.querySelector("#nif");
+const addressInput = document.querySelector("#address");
+const submitButton = customerForm.querySelector('button[type="submit"]');
 const customerTableBody = document.querySelector(".customer-table tbody");
 
 // Função que recebe um cliente e desenha uma linha na tabela
@@ -31,6 +34,10 @@ function addCustomerToTable(customer) {
     const phoneCell = document.createElement("td");
     phoneCell.textContent = customer.phoneNumber;
     row.appendChild(phoneCell);
+
+    const addressCell = document.createElement("td");
+    addressCell.textContent = customer.address;
+    row.appendChild(addressCell);
 
     // ---------------
 
@@ -61,6 +68,10 @@ function addCustomerToTable(customer) {
 
 async function loadCustomers() {
     const response = await fetch("/customers");
+    if (!response.ok) {
+        const message = await response.text();
+        throw new Error(message || `Error loading customers: ${response.status}`);
+    }
     const customers = await response.json();
 
     customers.forEach(customer => {
@@ -79,7 +90,8 @@ async function createCustomer(customerData) {
     });
 
     if (!response.ok) {
-        throw new Error(`Error creating customer: ${response.status}`);
+        const message = await response.text();
+        throw new Error(message || `Error creating customer: ${response.status}`);
     }
     const createdCustomer = await response.json();
 
@@ -96,7 +108,8 @@ async function updateCustomer(customerId, customerData) {
     });
 
     if (!response.ok) {
-        throw new Error(`Error updating customer: ${response.status}`);
+        const message = await response.text();
+        throw new Error(message || `Error updating customer: ${response.status}`);
     }
 
     const updatedCustomer = await response.json();
@@ -112,12 +125,17 @@ async function deleteCustomer(customerId) {
 
     if (!response.ok) {
         const message = await response.text();
-        throw new Error(message);
+        throw new Error(message || `Error deleting customer: ${response.status}`);
     }
 }
 
 
 customerTable.addEventListener("click", async (event) => {
+    // Aguarda o pedido atual antes de editar ou eliminar outro cliente.
+    if (customerRequestInProgress) {
+        return;
+    }
+
     const editButton = event.target.closest(".edit-button");
     const deleteButton = event.target.closest(".delete-button");
 
@@ -125,8 +143,6 @@ customerTable.addEventListener("click", async (event) => {
         const customerId = editButton.dataset.customerId;
 
         editingCustomerId = customerId;
-
-        console.log("Edit: ", customerId);
 
         editingRow = editButton.closest("tr");
 
@@ -136,11 +152,16 @@ customerTable.addEventListener("click", async (event) => {
         nifInput.value = cells[1].textContent;
         emailInput.value = cells[2].textContent;
         phoneInput.value = cells[3].textContent;
+        addressInput.value = cells[4].textContent;
+        submitButton.textContent = "Update Customer";
 
         return;
     }
 
     if (deleteButton) {
+        customerRequestInProgress = true;
+        submitButton.disabled = true;
+
         try {
             const customerId = deleteButton.dataset.customerId;
             const row = deleteButton.closest("tr");
@@ -149,52 +170,76 @@ customerTable.addEventListener("click", async (event) => {
 
             row.remove();
 
-            console.log("Delete: ", customerId);
+            if (editingCustomerId === customerId) {
+                customerForm.reset();
+            }
         } catch (error) {
             alert(error.message);
+        } finally {
+            customerRequestInProgress = false;
+            submitButton.disabled = false;
         }
     }
+});
+
+customerForm.addEventListener("reset", () => {
+    editingCustomerId = null;
+    editingRow = null;
+    submitButton.textContent = "Create Customer";
 });
 
 // SUBMIT
 customerForm.addEventListener("submit", async (event) => {
     event.preventDefault();
 
+    if (customerRequestInProgress) {
+        return;
+    }
+
+    const customerId = editingCustomerId;
+    const row = editingRow;
+
     const name = nameInput.value;
     const email = emailInput.value;
     const phone = phoneInput.value;
     const nif = nifInput.value;
+    const address = addressInput.value;
 
     const customerData = {
         name,
         nif,
         phoneNumber: phone,
-        email
+        email,
+        address
     };
 
-    if (editingCustomerId !== null) {
+    customerRequestInProgress = true;
+    submitButton.disabled = true;
 
-        const updatedCustomer = await updateCustomer(editingCustomerId, customerData);
-        const cells = editingRow.querySelectorAll("td");
+    try {
+        if (customerId !== null) {
+            const updatedCustomer = await updateCustomer(customerId, customerData);
+            const cells = row.querySelectorAll("td");
 
-        cells[0].textContent = updatedCustomer.name;
-        cells[1].textContent = updatedCustomer.nif;
-        cells[2].textContent = updatedCustomer.email;
-        cells[3].textContent = updatedCustomer.phoneNumber;
+            cells[0].textContent = updatedCustomer.name;
+            cells[1].textContent = updatedCustomer.nif;
+            cells[2].textContent = updatedCustomer.email;
+            cells[3].textContent = updatedCustomer.phoneNumber;
+            cells[4].textContent = updatedCustomer.address;
+        } else {
+            const createdCustomer = await createCustomer(customerData);
+            addCustomerToTable(createdCustomer);
+        }
 
-        editingCustomerId = null;
-        editingRow = null;
         customerForm.reset();
-
-        return;
+    } catch (error) {
+        alert(error.message);
+    } finally {
+        customerRequestInProgress = false;
+        submitButton.disabled = false;
     }
-
-
-    const createdCustomer = await createCustomer(customerData);
-
-    addCustomerToTable(createdCustomer);
-
-    customerForm.reset();
 });
 
-loadCustomers();
+loadCustomers().catch(error => {
+    alert(error.message);
+});
