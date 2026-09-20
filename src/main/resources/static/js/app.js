@@ -69,7 +69,7 @@ async function loadCustomers() {
 }
 
 
-async function createCustomer(customerData){
+async function createCustomer(customerData) {
     const response = await fetch("/customers", {
         method: "POST",
         headers: {
@@ -104,7 +104,20 @@ async function updateCustomer(customerId, customerData) {
     return updatedCustomer;
 }
 
-customerTable.addEventListener("click", (event) => {
+
+async function deleteCustomer(customerId) {
+    const response = await fetch(`/customers/${customerId}`, {
+        method: "DELETE",
+    });
+
+    if (!response.ok) {
+        const message = await response.text();
+        throw new Error(message);
+    }
+}
+
+
+customerTable.addEventListener("click", async (event) => {
     const editButton = event.target.closest(".edit-button");
     const deleteButton = event.target.closest(".delete-button");
 
@@ -128,11 +141,18 @@ customerTable.addEventListener("click", (event) => {
     }
 
     if (deleteButton) {
-        const customerId = deleteButton.dataset.customerId;
-        const row = deleteButton.closest("tr");
-        row.remove();
+        try {
+            const customerId = deleteButton.dataset.customerId;
+            const row = deleteButton.closest("tr");
 
-        console.log("Delete: ", customerId);
+            await deleteCustomer(customerId);
+
+            row.remove();
+
+            console.log("Delete: ", customerId);
+        } catch (error) {
+            alert(error.message);
+        }
     }
 });
 
@@ -154,7 +174,7 @@ customerForm.addEventListener("submit", async (event) => {
 
     if (editingCustomerId !== null) {
 
-        const updatedCustomer = await  updateCustomer(editingCustomerId, customerData);
+        const updatedCustomer = await updateCustomer(editingCustomerId, customerData);
         const cells = editingRow.querySelectorAll("td");
 
         cells[0].textContent = updatedCustomer.name;
